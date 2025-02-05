@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paperqa2_analysis"
+dynamic = ["version"]
+authors = [
+    {name = "Phong-Anh Nguyen Trinh", email = "pan31@cam.ac.uk"}
+]
+
+description = "Analysis of PaperQA2: Reproducing results from the paper 'Large Langauge Agents Achieve Superhuman Synthesis of Scientific Knowledge'"
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "paperqa2",
+    "pandas",
+    "numpy",
+    "matplotlib"
+]
+
+[tool.setuptools]
+packages = ["paperqa2_analysis"] 
+
+[tool.setuptools_scm]
+write_to = "paperqa2_analysis/version.py"
