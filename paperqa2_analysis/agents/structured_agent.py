@@ -19,7 +19,7 @@ class StructuredOutput(BaseModel):
     target: str = Field(..., description="The target answer, in the format of LETTER")
     
     def format(self) -> dict:
-        return {"Answer": self.answer, "Explanation": self.explanation, "Citations": self.citations}
+        return {"Answer": self.answer, "Explanation": self.explanation, "Citations": self.citations, "Target": self.target}
         # return f"Answer: {self.answer}\nExplanation: {self.explanation}\nCitations: {self.citations}"
     
     
@@ -109,7 +109,7 @@ if __name__ == "__main__":
             approximately 30.771%, which aligns with option E in the multiple-choice question.                      
                                                                                                                     
             ANSWER: E
-            TargetL E"""
+            Target: E"""
 
     struct_input = structured_agent(
         input_text=test_input,
