@@ -1,16 +1,27 @@
 import os
+import json
 
 from autogen import ConversableAgent, LLMConfig
 from pydantic import BaseModel, Field
 
 # Using a Pydantic Base Class to structure the output of the agent
-class StructuredModel(BaseModel):
-    answer: str = Field(..., description="Answer, the single letter answer to the question, in the format of $LETTER")
+class StructuredInput(BaseModel):
+    question: str = Field(..., description="Question, The question and multiple choice answers")
+    target: str = Field(..., description="Target, just the letter of the target")
+    
+    def format(self) -> dict:
+        return {"Question": self.question, "Target": self.target}
+
+class StructuredOutput(BaseModel):
+    answer: str = Field(..., description="Answer, the single letter answer to the question, in the format of LETTER")
     explanation: str = Field(..., description="Explanation, a short explanation of the answer with any citations found within the text.")
     citations: list[str] = Field(..., description="Citations, a list of citations found within the text.")
+    target: str = Field(..., description="The target answer, in the format of LETTER")
     
-    def format(self) -> str:
-        return f"Answer: {self.answer}\nExplanation: {self.explanation}\nCitations: {self.citations}"
+    def format(self) -> dict:
+        return {"Answer": self.answer, "Explanation": self.explanation, "Citations": self.citations}
+        # return f"Answer: {self.answer}\nExplanation: {self.explanation}\nCitations: {self.citations}"
+    
     
 # Templates
 AGENT_INSTRUCTIONS = """
@@ -43,25 +54,45 @@ def structured_agent(
     
     response.process()
     
-    return response.output
+    # Get the final message
+    final_message = response.messages[-1]
+    
+    return final_message["content"]
 
 
 if __name__ == "__main__":
-    print(os.getenv("OPENAI_API_KEY"))
     # Create LLM config:
-    llm_config = LLMConfig(
+    llm_config_input = LLMConfig(
         api_type="openai",
         api_key=os.getenv("OPENAI_API_KEY"),
         model="gpt-4o-mini",
         temperature=0.1,
-        response_format=StructuredModel,
+        response_format=StructuredInput,
+    )
+    
+    llm_config_output = LLMConfig(
+        api_type="openai",
+        api_key=os.getenv("OPENAI_API_KEY"),
+        model="gpt-4o-mini",
+        temperature=0.1,
+        response_format=StructuredOutput,
     )
 
     # Test
     import nest_asyncio
     nest_asyncio.apply()
+    
+    test_input = """Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 
+    A) 31%
+    B) 41%
+    C) 11%
+    D) 51%
+    E) 21%
+    F) Insufficient information to answer the question.
+    Target: A
+    """
 
-    test_text = """Answer: DiffDomain identifies that approximately 30.771% of topologically associated domains (TADs) in  
+    test_output = """Answer: DiffDomain identifies that approximately 30.771% of topologically associated domains (TADs) in  
             the GM12878 blood cell line are reorganized in the K562 cell line                                       
             (hua2024diffdomainenablesidentification pages 4-4). This finding is significant when compared to other  
             methods, such as TADCompare, HiCcompare, and HiC-DC+, which only identify ≤8.256% of GM12878 TADs as    
@@ -77,14 +108,23 @@ if __name__ == "__main__":
             In summary, the percentage of TADs in GM12878 classified as reorganized in K562 by DiffDomain is        
             approximately 30.771%, which aligns with option E in the multiple-choice question.                      
                                                                                                                     
-            ANSWER: E"""
+            ANSWER: E
+            TargetL E"""
 
-    structured_answer = structured_agent(
-        input_text=test_text,
-        llm_config=llm_config,
+    struct_input = structured_agent(
+        input_text=test_input,
+        llm_config=llm_config_input
     )
     
-    print(structured_answer)
+    print(struct_input)
+    print("-" * 50)
+    
+    struct_output = structured_agent(
+        input_text=test_output,
+        llm_config=llm_config_output
+    )
+    
+    print(struct_output)
 
 
     
