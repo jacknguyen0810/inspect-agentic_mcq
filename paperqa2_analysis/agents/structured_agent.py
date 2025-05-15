@@ -13,7 +13,7 @@ class StructuredInput(BaseModel):
         return {"Question": self.question, "Target": self.target}
 
 class StructuredOutput(BaseModel):
-    answer: str = Field(..., description="Answer, the single letter answer to the question, in the format of LETTER")
+    answer: str = Field(..., description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen")
     explanation: str = Field(..., description="Explanation, a short explanation of the answer with any citations found within the text.")
     citations: list[str] = Field(..., description="Citations, a list of citations found within the text.")
     target: str = Field(..., description="The target answer, in the format of LETTER")
@@ -37,8 +37,21 @@ Text:
     
 def structured_agent(
     input_text: str,
-    llm_config: LLMConfig | dict,
+    structure: StructuredInput | StructuredOutput,
+    model: tuple | None = None,
+    temp: float = 0.1,
 ):
+    # Default model to OpenAI gpt-4o-mini
+    if model is None:
+        model = ("openai", "gpt-4o-mini")
+    
+    llm_config = LLMConfig(
+        api_type=model[0],
+        api_key=os.getenv("OPENAI_API_KEY"),
+        model=model[1],
+        temperature=temp,
+        response_format=structure,
+    )
     
     # Create agent 
     agent = ConversableAgent(
@@ -61,22 +74,6 @@ def structured_agent(
 
 
 if __name__ == "__main__":
-    # Create LLM config:
-    llm_config_input = LLMConfig(
-        api_type="openai",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        model="gpt-4o-mini",
-        temperature=0.1,
-        response_format=StructuredInput,
-    )
-    
-    llm_config_output = LLMConfig(
-        api_type="openai",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        model="gpt-4o-mini",
-        temperature=0.1,
-        response_format=StructuredOutput,
-    )
 
     # Test
     import nest_asyncio
@@ -110,18 +107,21 @@ if __name__ == "__main__":
                                                                                                                     
             ANSWER: E
             Target: E"""
+            
+    na_test_prompt = """Not enough answer to answer the question. The selected answer is NA. 
+    """
 
     struct_input = structured_agent(
         input_text=test_input,
-        llm_config=llm_config_input
+        structure=StructuredInput
     )
     
     print(struct_input)
     print("-" * 50)
     
     struct_output = structured_agent(
-        input_text=test_output,
-        llm_config=llm_config_output
+        input_text=na_test_prompt,
+        structure=StructuredOutput
     )
     
     print(struct_output)

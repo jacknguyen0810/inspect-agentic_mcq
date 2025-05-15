@@ -18,9 +18,6 @@ def record_to_sample_custom(record: dict) -> Sample:
     # Shuffle the dataset
     random.shuffle(choices)
     
-    
-    choices.append(UNCERTAIN_ANSWER_CHOICE)
-    
     # Find the ideal answer
     ideal_idx = choices.index(record["ideal"])
     
@@ -30,8 +27,10 @@ def record_to_sample_custom(record: dict) -> Sample:
         [f"{chr(65 + i)}) {j}" for i, j in enumerate(choices)]
     )
     
+    message += f"\nNA) {UNCERTAIN_ANSWER_CHOICE}"
+    
     # Add the target to the message: 
-    message += f"\nTarget: {chr(65 + ideal_idx)}"
+    message += f"\n\nTarget: {chr(65 + ideal_idx)}"
     
     # Make the message a part of the Sample
     return Sample(

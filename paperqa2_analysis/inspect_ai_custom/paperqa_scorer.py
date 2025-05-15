@@ -62,15 +62,40 @@ def paperqa_accuracy(to_float: ValueToFloat = precision_value_to_float()) -> Met
 def paperqa_scorer(no_answer: str) -> Scorer:
     
     # Create async score function
-    async def score(state: TaskState) -> Score:
+    async def score(state: TaskState, target: Target) -> Score:
         
-        # use json to load the answer
-        output = json.loads(state.output)
+        try:
+            # use json to load the answer
+            output = json.loads(state.output.completion)
+            
+            answer = output.get("answer", "")
+            
+            # If target is provided as JSON
+            try:
+                target_value = json.loads(target.text)
+                expected_answer = target_value.get("answer", "")
+            except json.JSONDecodeError:
+                # If target is not JSON, use it directly
+                expected_answer = target.text
+            
+            # Calculate metrics
+            is_correct = answer == expected_answer
+            is_no_answer_target = expected_answer == no_answer
+            is_no_answer_output = answer == no_answer
+            
+            # Determine the score value
+            if is_no_answer_target and is_no_answer_output:
+                return Score(value=CORRECT, answer=answer)
+            elif is_no_answer_output:
+                return Score(value=NOANSWER, answer=answer)
+            elif is_correct:
+                return Score(value=CORRECT, answer=answer)
+            else:
+                return Score(value=INCORRECT, answer=answer)
+                
+        except (json.JSONDecodeError, AttributeError, KeyError) as e:
+            # Handle errors in parsing
+            return Score(value=INCORRECT, answer=f"Error: {str(e)}")
+
+    return score
         
-        answer = output["answer"]
-        target = output["target"]
-        
-        # Calculate metrics
-        is_correct = output == target
-        is_no_answer_target = target == no_answer
-        is_no_answer_output = output == no_answer

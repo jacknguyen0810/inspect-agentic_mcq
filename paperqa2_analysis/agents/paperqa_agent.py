@@ -8,8 +8,6 @@ from paperqa2_analysis.agents.structured_agent import structured_agent, Structur
             
         
 def paperqa_agent(
-    input_config: LLMConfig | dict,
-    output_config: LLMConfig | dict,
     settings: Settings | None = None,
     template: str | None = None,
 ):
@@ -25,7 +23,7 @@ def paperqa_agent(
         
         # Get the input message and decode into output
         # Use the strucuted agent
-        input_str = structured_agent(sample["messages"][0]["content"], input_config)
+        input_str = structured_agent(sample["messages"][0]["content"], StructuredInput)
         message = json.loads(input_str)
         question = message["question"]
         target = message["target"]
@@ -42,7 +40,7 @@ def paperqa_agent(
         response.session.answer += f"\nTarget: {target}"
         
         # Now use AG2 formatter to format response
-        formatted = structured_agent(response.session.answer, output_config)
+        formatted = structured_agent(response.session.answer, StructuredOutput)
         
         return dict(output=formatted)
         
@@ -123,23 +121,6 @@ if __name__ == "__main__":
     import os
     import asyncio
     
-    # Create LLM config:
-    llm_config_input = LLMConfig(
-        api_type="openai",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        model="gpt-4o-mini",
-        temperature=0.1,
-        response_format=StructuredInput,
-    )
-    
-    llm_config_output = LLMConfig(
-        api_type="openai",
-        api_key=os.getenv("OPENAI_API_KEY"),
-        model="gpt-4o-mini",
-        temperature=0.1,
-        response_format=StructuredOutput,
-    )
-    
     test_prompt = """
     Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 
     A) 11%
@@ -147,7 +128,7 @@ if __name__ == "__main__":
     C) 21%
     D) 51%
     E) 31%
-    F) Insufficient information to answer the question.
+    NA) Insufficient information to answer the question.
     Target: E
     """
     
@@ -160,8 +141,6 @@ if __name__ == "__main__":
     async def test_paperqa_agent():
         # Create the agent
         agent = paperqa_agent(
-            input_config=llm_config_input,
-            output_config=llm_config_output
         )
         
         # Run the agent
