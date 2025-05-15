@@ -1,5 +1,4 @@
 import pandas as pd
-import asyncio
 
 from inspect_ai import Epochs, Task, task, eval
 from inspect_ai.dataset import MemoryDataset
@@ -13,7 +12,6 @@ from paperqa2_analysis.agents.paperqa_agent import paperqa_agent
 if __name__ == "__main__":
     # Import data
     litqa2_test_data = pd.read_parquet("/root/paperQA2_analysis/data/LitQA_data/test-00000-of-00001.parquet")
-    test_dataset = df_2_sample_bridge(litqa2_test_data)
     
     # Mini Example with 1 working sample
     mini_example = {
