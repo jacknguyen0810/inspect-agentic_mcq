@@ -7,60 +7,15 @@ from autogen import LLMConfig
 from paperqa2_analysis.agents.structured_agent import structured_agent, StructuredOutput, StructuredInput
             
         
-def paperqa_agent(
-    settings: Settings | None = None,
-    template: str | None = None,
-):
-    
-    if settings is None:
-        settings = paperqa_settings
+async def paperqa_agent(
+    prompt: str
+):  
+    response = await agent_query(
+        query=prompt,
+        settings=paperqa_settings
+    )
         
-    if template is None:
-        template = MULTIPLE_CHOICE_TEMPLATE_BRIDGE
-        
-    
-    async def run(sample: dict[str]) -> dict:
-        
-        # Get the input message and decode into output
-        # Use the strucuted agent
-        input_str = structured_agent(sample["messages"][0]["content"], StructuredInput)
-        message = json.loads(input_str)
-        question = message["question"]
-        target = message["target"]
-        
-        
-        response = await agent_query(
-            query=template.format(
-                question=question
-            ),
-            settings=settings
-        )
-        
-        # Add the target information into the text answer so it can be parsed to the next agent
-        response.session.answer += f"\nTarget: {target}"
-        
-        # Now use AG2 formatter to format response
-        formatted = structured_agent(response.session.answer, StructuredOutput)
-        
-        return dict(output=formatted)
-        
-    return run
-        
-        
-MULTIPLE_CHOICE_TEMPLATE_BRIDGE = """
-The following is a multiple choice question about biology.
-Please answer by responding with the letter of the correct answer.
-
-Think step by step.
-
-{question}
-"""
-
-# Return your answer in the following format:
-
-# "letter".
-
-# where the letter denotes your chosen answer from the available options. You MUST only include the letter (with no quotation marks) and NOTHING ELSE.
+    return response.session.answer
 
 
 # Set up LLM config (main LLM for reasoning, extract metadata, ...)
