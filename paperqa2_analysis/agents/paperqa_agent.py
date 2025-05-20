@@ -73,8 +73,10 @@ paperqa_settings = Settings(
 
 
 if __name__ == "__main__":
-    import os
+    # import os
     import asyncio
+    
+    # TODO: Update the test run
     
     test_prompt = """
     Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 
@@ -94,38 +96,25 @@ if __name__ == "__main__":
     }
     
     async def test_paperqa_agent():
-        # Create the agent
-        agent = paperqa_agent(
+        # Run the agent directly
+        result = await paperqa_agent(
+            prompt=test_prompt
         )
-        
-        # Run the agent
-        result = await agent(test_sample)
         
         # Print the result
         print("\nTest Results:")
         print("-" * 50)
         print(f"Input question: {test_prompt.strip()}")
-        print(f"Agent output: {result['output']}")
+        print("\n")
+        print(f"Agent output: {result}")
         print("-" * 50)
         
-        # # Verify the output format
-        # if not isinstance(result, dict):
-        #     print("❌ Error: Result is not a dictionary")
-        #     return False
+        # Verify the output format
+        if not isinstance(result, str):
+            print("❌ Error: Result is not a string")
+            return False
             
-        # if 'output' not in result:
-        #     print("❌ Error: Result does not contain 'output' key")
-        #     return False
-            
-        # if not isinstance(result['output'], str):
-        #     print("❌ Error: Output is not a string")
-        #     return False
-            
-        # if result['output'] not in ['A', 'B', 'C', 'D', 'E', 'F']:
-        #     print("❌ Error: Output is not one of the expected letters (A-F)")
-        #     return False
-            
-        # print("✅ All tests passed!")
+        print("✅ All tests passed!")
         return True
     
     # Run the test
