@@ -69,6 +69,7 @@ def paperqa_scorer(no_answer: str) -> Scorer:
             output = json.loads(state.output.completion)
             
             answer = output.get("answer", "")
+            explanation = output.get("explanation", "")
             
             # If target is provided as JSON
             try:
@@ -85,17 +86,17 @@ def paperqa_scorer(no_answer: str) -> Scorer:
             
             # Determine the score value
             if is_no_answer_target and is_no_answer_output:
-                return Score(value=CORRECT, answer=answer)
+                return Score(value=CORRECT, answer=answer, explanation=explanation)
             elif is_no_answer_output:
-                return Score(value=NOANSWER, answer=answer)
+                return Score(value=NOANSWER, answer=answer, explanation=explanation)
             elif is_correct:
-                return Score(value=CORRECT, answer=answer)
+                return Score(value=CORRECT, answer=answer, explanation=explanation)
             else:
-                return Score(value=INCORRECT, answer=answer)
+                return Score(value=INCORRECT, answer=answer, explanation=explanation)
                 
         except (json.JSONDecodeError, AttributeError, KeyError) as e:
             # Handle errors in parsing
-            return Score(value=INCORRECT, answer=f"Error: {str(e)}")
+            return Score(value=INCORRECT, answer=f"Error: {str(e)},")
 
     return score
         
