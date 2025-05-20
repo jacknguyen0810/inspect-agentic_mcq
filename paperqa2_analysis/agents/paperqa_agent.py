@@ -3,11 +3,15 @@ from paperqa.settings import AgentSettings, AnswerSettings
             
         
 async def paperqa_agent(
-    prompt: str
+    prompt: str,
+    settings: Settings | None = None
 ):  
+    # Use provided settings or default to paperqa_settings
+    settings_to_use = settings if settings is not None else paperqa_settings
+    
     response = await agent_query(
         query=prompt,
-        settings=paperqa_settings
+        settings=settings_to_use
     )
         
     return response.session.answer

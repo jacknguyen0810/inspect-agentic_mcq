@@ -14,7 +14,7 @@ class StructuredInput(BaseModel):
 
 class StructuredOutput(BaseModel):
     answer: str = Field(..., description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen")
-    explanation: str = Field(..., description="Explanation, a short explanation of the answer with any citations found within the text.")
+    explanation: str = Field(..., description="Explanation, the full explanation of the answer with any citations found within the text.")
     citations: list[str] = Field(..., description="Citations, a list of citations found within the text.")
     target: str = Field(..., description="The target answer, in the format of LETTER")
     

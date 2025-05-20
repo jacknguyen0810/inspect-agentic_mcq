@@ -15,9 +15,9 @@ from paperqa2_analysis.agents.structured_agent import (
 def bridge_agent(
     custom_agent: Callable,
     template: str | None = None,
+    **kwargs
 ):
-    # Validate the custom agent before proceeding
-    _validate_custom_agent(custom_agent)
+
     
     # Give default template
     if template is None:
@@ -34,8 +34,8 @@ def bridge_agent(
         # Format the template to pass to the agent
         query = template.format(question=question)
         
-        # Pass arguments to custom agent
-        response = await custom_agent(query)
+        # Pass arguments to custom agent, including any kwargs
+        response = await custom_agent(query, **kwargs)
         
         # Add the target to the string response so that it can be parsed by the structured agent
         response += f"\nTarget: {target}"
@@ -46,34 +46,7 @@ def bridge_agent(
         
         return dict(output=formatted)
     
-    return run
-        
-        
-        
-
-
-
-
-def _validate_custom_agent(custom_agent: Callable) -> None:
-    """Validate that the custom agent is a function that takes in and returns a string.
-    
-    Args:
-        custom_agent: The custom agent function to validate
-        
-    Raises:
-        TypeError: If the custom agent is not a function or doesn't have the correct signature
-        ValueError: If the custom agent doesn't return a string
-    """
-    if not callable(custom_agent):
-        raise TypeError("Custom agent must be a callable function")
-        
-    # Test the function with a sample input
-    try:
-        result = custom_agent("test question")
-        if not isinstance(result, str):
-            raise ValueError(f"Custom agent must return a string, got {type(result)}")
-    except Exception as e:
-        raise TypeError(f"Custom agent must accept a string input and return a string. Error: {str(e)}")   
+    return run 
         
         
         
@@ -91,3 +64,64 @@ Think step by step.
 # "letter".
 
 # where the letter denotes your chosen answer from the available options. You MUST only include the letter (with no quotation marks) and NOTHING ELSE.
+
+if __name__ == "__main__":
+    import asyncio
+    from paperqa2_analysis.agents.paperqa_agent import paperqa_agent, paperqa_settings
+    
+    async def test_bridge_agent():
+        # Create test input
+        test_prompt = """
+        Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 
+        A) 11%
+        B) 41%
+        C) 21%
+        D) 51%
+        E) 31%
+        NA) Insufficient information to answer the question.
+        Target: E
+        """
+        
+        test_sample = {
+            "messages": [
+                {"content": test_prompt}
+            ]
+        }
+        
+        # Create the bridge agent with paperqa_agent as the custom agent
+        # Pass paperqa_settings as a kwarg to be used by the custom agent
+        agent = bridge_agent(
+            custom_agent=paperqa_agent,
+            template=MULTIPLE_CHOICE_TEMPLATE_BRIDGE,
+            settings=paperqa_settings  # This will be passed to paperqa_agent
+        )
+        
+        # Run the agent
+        result = await agent(test_sample)
+        
+        # Print the results
+        print("\nTest Results:")
+        print("-" * 50)
+        print(f"Input question: {test_prompt.strip()}")
+        print("\n")
+        print(f"Bridge agent output: {result['output']}")
+        print("-" * 50)
+        
+        # Verify the output format
+        if not isinstance(result, dict):
+            print("❌ Error: Result is not a dictionary")
+            return False
+            
+        if 'output' not in result:
+            print("❌ Error: Result does not contain 'output' key")
+            return False
+            
+        if not isinstance(result['output'], str):
+            print("❌ Error: Output is not a string")
+            return False
+            
+        print("✅ All tests passed!")
+        return True
+    
+    # Run the test
+    asyncio.run(test_bridge_agent())

@@ -22,7 +22,7 @@ def record_to_sample_custom(record: dict) -> Sample:
     ideal_idx = choices.index(record["ideal"])
     
     # Add prefixes to the shuffled choices
-    indices = list[range(len(choices))]
+    # indices = list[range(len(choices))]
     message +=  "\n".join(
         [f"{chr(65 + i)}) {j}" for i, j in enumerate(choices)]
     )
@@ -33,6 +33,7 @@ def record_to_sample_custom(record: dict) -> Sample:
     message += f"\n\nTarget: {chr(65 + ideal_idx)}"
     
     # Make the message a part of the Sample
+    # TODO: Update Sample to include explanation
     return Sample(
         input=message,
         choices=choices,
