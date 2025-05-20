@@ -1,10 +1,5 @@
-import json
-
-from paperqa import ask, Settings, agent_query
+from paperqa import Settings, agent_query
 from paperqa.settings import AgentSettings, AnswerSettings
-from autogen import LLMConfig
-
-from paperqa2_analysis.agents.structured_agent import structured_agent, StructuredOutput, StructuredInput
             
         
 async def paperqa_agent(
