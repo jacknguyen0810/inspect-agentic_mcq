@@ -100,9 +100,9 @@ class MultipleChoiceEval:
         # Get the function signature
         sig = inspect.signature(custom_agent)
         
-        # Check that the function takes exactly one parameter
-        if len(sig.parameters) != 1:
-            raise TypeError(f"Custom agent must take exactly one parameter, got {len(sig.parameters)}")
+        # Check that the function takes at least one parameter
+        if len(sig.parameters) < 1:
+            raise TypeError(f"Custom agent must take at least one parameter, got {len(sig.parameters)}")
             
         # Check the return type annotation if it exists
         return_annotation = sig.return_annotation

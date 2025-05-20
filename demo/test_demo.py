@@ -10,13 +10,6 @@ if __name__ == "__main__":
     # Import data
     litqa2_test_data = pd.read_parquet("/root/paperQA2_analysis/data/LitQA_data/test-00000-of-00001.parquet")
     
-    # Create mini dataset with one sample
-    mini_data = pd.DataFrame([{
-        "question": litqa2_test_data["question"][0],
-        "ideal": litqa2_test_data["ideal"][0],
-        "distractors": litqa2_test_data["distractors"][0]
-    }])
-    
     # Set up LLM config (main LLM for reasoning, extract metadata, ...)
     llm_config_dict = {
         "model_list": [
@@ -70,16 +63,16 @@ if __name__ == "__main__":
         paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs"
     )
     
-    # Create the evaluation instance
+    # Create the evaluation instance with full test dataset
     eval_instance = MultipleChoiceEval(
-        data=mini_data,
+        data=litqa2_test_data,
         agent=paperqa_agent,
         template=None,  # Will use default template
         no_answer="NA"  # Specify the no answer option
     )
     
     # Run the evaluation
-    print("\nRunning evaluation on mini dataset...")
+    print("\nRunning evaluation on full test dataset...")
     eval_instance.run()
     print("Evaluation complete!")
     
