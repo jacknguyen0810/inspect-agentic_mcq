@@ -1,12 +1,9 @@
 from paperqa import Settings, agent_query
 from paperqa.settings import AgentSettings, AnswerSettings
-            
-        
-async def paperqa_agent(
-    prompt: str,
-    settings: Settings | None = None
-) -> str:  
-    """PaperQA agent wrapper. 
+
+
+async def paperqa_agent(prompt: str, settings: Settings | None = None) -> str:
+    """PaperQA agent wrapper.
 
     Args:
         prompt (str): Prompt for PaperQA2
@@ -17,12 +14,9 @@ async def paperqa_agent(
     """
     # Use provided settings or default to paperqa_settings
     settings_to_use = settings if settings is not None else paperqa_settings
-    
-    response = await agent_query(
-        query=prompt,
-        settings=settings_to_use
-    )
-        
+
+    response = await agent_query(query=prompt, settings=settings_to_use)
+
     return response.session.answer
 
 
@@ -34,25 +28,20 @@ llm_config_dict = {
             "litellm_params": {
                 "model": "gpt-4o-mini",
                 "temperature": 0,
-                "max_tokens": 4096
-            }
+                "max_tokens": 4096,
+            },
         }
     ],
-    "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}
+    "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"},
 }
 
 # Set up agent (answer search and selecting tools):
 agent_settings = AgentSettings(
-    agent_llm="gpt-4o-mini",
-    agent_llm_config={
-        "rate_limit": "30000 per 1 minute"
-    }
+    agent_llm="gpt-4o-mini", agent_llm_config={"rate_limit": "30000 per 1 minute"}
 )
 
 # Set up summary LLM config
-summary_config_dict = {
-    "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}
-}
+summary_config_dict = {"rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}}
 
 # Set up answer format
 answer_settings = AnswerSettings(
@@ -63,7 +52,7 @@ answer_settings = AnswerSettings(
     evidence_skip_summary=False,
     answer_max_sources=5,
     max_answer_attempts=5,
-    answer_length="1 letter"
+    answer_length="1 letter",
 )
 
 # Set up the final settings object
@@ -76,14 +65,14 @@ paperqa_settings = Settings(
     temperature=0,
     batch_size=1,
     verbosity=1,
-    paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs"
+    paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs",
 )
 
 
 if __name__ == "__main__":
     # import os
     import asyncio
-    
+
     test_prompt = """
     Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 
     A) 11%
@@ -94,19 +83,13 @@ if __name__ == "__main__":
     NA) Insufficient information to answer the question.
     Target: E
     """
-    
-    test_sample = {
-        "messages": [
-            {"content": test_prompt}
-        ]
-    }
-    
+
+    test_sample = {"messages": [{"content": test_prompt}]}
+
     async def test_paperqa_agent():
         # Run the agent directly
-        result = await paperqa_agent(
-            prompt=test_prompt
-        )
-        
+        result = await paperqa_agent(prompt=test_prompt)
+
         # Print the result
         print("\nTest Results:")
         print("-" * 50)
@@ -114,15 +97,14 @@ if __name__ == "__main__":
         print("\n")
         print(f"Agent output: {result}")
         print("-" * 50)
-        
+
         # Verify the output format
         if not isinstance(result, str):
             print("❌ Error: Result is not a string")
             return False
-            
+
         print("✅ All tests passed!")
         return True
-    
+
     # Run the test
     asyncio.run(test_paperqa_agent())
-    

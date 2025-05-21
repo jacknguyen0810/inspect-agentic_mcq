@@ -3,25 +3,42 @@ import os
 from autogen import ConversableAgent, LLMConfig
 from pydantic import BaseModel, Field
 
+
 # Using a Pydantic Base Class to structure the output of the agent
 class StructuredInput(BaseModel):
-    question: str = Field(..., description="Question, The question and multiple choice answers")
+    question: str = Field(
+        ..., description="Question, The question and multiple choice answers"
+    )
     target: str = Field(..., description="Target, just the letter of the target")
-    
+
     def format(self) -> dict:
         return {"Question": self.question, "Target": self.target}
 
+
 class StructuredOutput(BaseModel):
-    answer: str = Field(..., description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen")
-    explanation: str = Field(..., description="Explanation, the full explanation of the answer with any citations found within the text.")
-    citations: list[str] = Field(..., description="Citations, a list of citations found within the text.")
+    answer: str = Field(
+        ...,
+        description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen",
+    )
+    explanation: str = Field(
+        ...,
+        description="Explanation, the full explanation of the answer with any citations found within the text.",
+    )
+    citations: list[str] = Field(
+        ..., description="Citations, a list of citations found within the text."
+    )
     target: str = Field(..., description="The target answer, in the format of LETTER")
-    
+
     def format(self) -> dict:
-        return {"Answer": self.answer, "Explanation": self.explanation, "Citations": self.citations, "Target": self.target}
+        return {
+            "Answer": self.answer,
+            "Explanation": self.explanation,
+            "Citations": self.citations,
+            "Target": self.target,
+        }
         # return f"Answer: {self.answer}\nExplanation: {self.explanation}\nCitations: {self.citations}"
-    
-    
+
+
 # Templates
 AGENT_INSTRUCTIONS = """
 You are an agent that is able to parse the output of a given text and return the desired output.
@@ -33,28 +50,28 @@ Text:
 {text}
 """
 
-    
+
 def structured_agent(
     input_text: str,
     structure: StructuredInput | StructuredOutput,
     model: tuple | None = None,
     temp: float = 0.1,
 ) -> str:
-    """Agent to structure text to specified format. 
+    """Agent to structure text to specified format.
 
     Args:
-        input_text (str): Input to format. 
-        structure (StructuredInput | StructuredOutput): Desired json schema. 
+        input_text (str): Input to format.
+        structure (StructuredInput | StructuredOutput): Desired json schema.
         model (tuple | None, optional): Model provider and name e.g. (openai, "gpt-4o-mini). Defaults to None.
         temp (float, optional): Temperature of formatting LLM. Defaults to 0.1.
 
     Returns:
-        str: String containing json schema. Use json.load to turn into a dictionary. 
+        str: String containing json schema. Use json.load to turn into a dictionary.
     """
     # Default model to OpenAI gpt-4o-mini
     if model is None:
         model = ("openai", "gpt-4o-mini")
-    
+
     llm_config = LLMConfig(
         api_type=model[0],
         api_key=os.getenv("OPENAI_API_KEY"),
@@ -62,24 +79,24 @@ def structured_agent(
         temperature=temp,
         response_format=structure,
     )
-    
-    # Create agent 
+
+    # Create agent
     agent = ConversableAgent(
         name="structured_agent",
         llm_config=llm_config,
         system_message=AGENT_INSTRUCTIONS,
     )
-    
+
     response = agent.run(
         message=ANSWER_MESSAGE_TEMPLATE.format(text=input_text),
         max_turns=1,
     )
-    
+
     response.process()
-    
+
     # Get the final message
     final_message = response.messages[-1]
-    
+
     return final_message["content"]
 
 
@@ -87,8 +104,9 @@ if __name__ == "__main__":
 
     # Test
     import nest_asyncio
+
     nest_asyncio.apply()
-    
+
     test_input = """Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 
     A) 31%
     B) 41%
@@ -117,25 +135,17 @@ if __name__ == "__main__":
                                                                                                                     
             ANSWER: E
             Target: E"""
-            
+
     na_test_prompt = """Not enough answer to answer the question. The selected answer is NA. 
     """
 
-    struct_input = structured_agent(
-        input_text=test_input,
-        structure=StructuredInput
-    )
-    
+    struct_input = structured_agent(input_text=test_input, structure=StructuredInput)
+
     print(struct_input)
     print("-" * 50)
-    
+
     struct_output = structured_agent(
-        input_text=na_test_prompt,
-        structure=StructuredOutput
+        input_text=na_test_prompt, structure=StructuredOutput
     )
-    
+
     print(struct_output)
-
-
-    
-

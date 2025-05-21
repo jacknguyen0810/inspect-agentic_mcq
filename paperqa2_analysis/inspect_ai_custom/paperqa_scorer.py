@@ -1,9 +1,22 @@
 import json
 
-from inspect_ai.scorer import Score, Scorer, Target, scorer, metric, SampleScore, ValueToFloat, Value, value_to_float, CORRECT, INCORRECT, NOANSWER, Metric
+from inspect_ai.scorer import (
+    Score,
+    Scorer,
+    Target,
+    scorer,
+    metric,
+    SampleScore,
+    ValueToFloat,
+    Value,
+    value_to_float,
+    CORRECT,
+    INCORRECT,
+    NOANSWER,
+    Metric,
+)
 from inspect_ai.solver import TaskState
 
-      
 
 # Custom Value to Float function
 def precision_value_to_float(
@@ -16,67 +29,67 @@ def precision_value_to_float(
         if isinstance(value, int | float | bool):
             return float(value)
         # Returh -1 score for unable to answer.
-        elif value == noanswer:  
+        elif value == noanswer:
             return -1
         else:
             return value_to_float(
-                correct=correct,
-                incorrect=incorrect,
-                noanswer=noanswer
+                correct=correct, incorrect=incorrect, noanswer=noanswer
             )(value)
+
     return to_float
-        
+
 
 # Custom Metrics
 @metric
 def paperqa_precision(to_float: ValueToFloat = precision_value_to_float()) -> Metric:
-    
+
     def metric(scores: list[SampleScore]) -> float:
         # Get the answered questions
         answered = [i for i in scores if to_float(i.score.value) != -1]
         # Check if no questions answered
         if len(answered) == 0:
             return 0.0
-        
+
         total = 0.0
         for i in answered:
             total += to_float(i.score.value)
         return total / float(len(answered))
-    
+
     return metric
+
 
 @metric
 def paperqa_accuracy(to_float: ValueToFloat = precision_value_to_float()) -> Metric:
-    
-    def metric(scores: list[SampleScore]) -> float:     
+
+    def metric(scores: list[SampleScore]) -> float:
         total = 0.0
         for i in scores:
             total += to_float(i.score.value)
         return total / float(len(scores))
-    
-    return metric
 
+    return metric
 
 
 @scorer(metrics=[paperqa_accuracy(), paperqa_precision()])
 def paperqa_scorer() -> Scorer:
-    """Custom inspect_ai Scorer. No partial marks. Handles custom accuracy and precision. 
+    """Custom inspect_ai Scorer. No partial marks. Handles custom accuracy and precision.
 
     Returns:
-        Scorer: For the inspect_ai interface. 
+        Scorer: For the inspect_ai interface.
     """
+
     # Create async score function
     async def score(state: TaskState, target: Target) -> Score:
-        
+
         try:
             # use json to load the answer
             output = json.loads(state.output.completion)
-            
+
             answer = output.get("answer", "")
             explanation = output.get("explanation", "")
-            
+
             no_answer = "NA"
-            
+
             # If target is provided as JSON
             try:
                 target_value = json.loads(target.text)
@@ -84,12 +97,12 @@ def paperqa_scorer() -> Scorer:
             except json.JSONDecodeError:
                 # If target is not JSON, use it directly
                 expected_answer = target.text
-            
+
             # Calculate metrics
             is_correct = answer == expected_answer
             is_no_answer_target = expected_answer == no_answer
             is_no_answer_output = answer == no_answer
-            
+
             # Determine the score value
             if is_no_answer_target and is_no_answer_output:
                 return Score(value=CORRECT, answer=answer, explanation=explanation)
@@ -99,10 +112,9 @@ def paperqa_scorer() -> Scorer:
                 return Score(value=CORRECT, answer=answer, explanation=explanation)
             else:
                 return Score(value=INCORRECT, answer=answer, explanation=explanation)
-                
+
         except (json.JSONDecodeError, AttributeError, KeyError) as e:
             # Handle errors in parsing
             return Score(value=INCORRECT, answer=f"Error: {str(e)},")
 
     return score
-        
