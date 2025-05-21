@@ -68,7 +68,7 @@ if __name__ == "__main__":
         data=litqa2_test_data,
         agent=paperqa_agent,
         template=None,  # Will use default template
-        no_answer="NA"  # Specify the no answer option
+        settings=paperqa_settings  # Pass settings as a kwarg
     )
     
     # Run the evaluation

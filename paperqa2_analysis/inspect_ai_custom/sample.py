@@ -7,6 +7,14 @@ from inspect_ai.dataset import MemoryDataset, Sample
 
 
 def record_to_sample_custom(record: dict) -> Sample:
+    """Custom function to transform dictionaries into inspect_ai Samples. 
+
+    Args:
+        record (dict): Conatins information needed for MCQ. 
+
+    Returns:
+        Sample: Completed Sample object for MCQ
+    """
     # Get the question
     message = f"Question: {record["question"]} \n"
     
@@ -33,7 +41,6 @@ def record_to_sample_custom(record: dict) -> Sample:
     message += f"\n\nTarget: {chr(65 + ideal_idx)}"
     
     # Make the message a part of the Sample
-    # TODO: Update Sample to include explanation
     return Sample(
         input=message,
         choices=choices,
@@ -44,6 +51,14 @@ def record_to_sample_custom(record: dict) -> Sample:
 
 
 def df_2_sample_bridge(data: DataFrame) -> MemoryDataset:
+    """Function to transform a pandas DataFrame to a MemoryDataset for inspect_ai processing. 
+
+    Args:
+        data (DataFrame): DataFrame containing required information. 
+
+    Returns:
+        MemoryDataset: Full MemeoryDataset for inspect_ai processing
+    """
     records = data.to_dict(orient="records")
     samples = [record_to_sample_custom(i) for i in records]
     return MemoryDataset(samples)

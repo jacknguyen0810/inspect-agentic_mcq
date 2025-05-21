@@ -1,6 +1,6 @@
 import json
 
-from inspect_ai.scorer import Score, Scorer, Target, scorer, accuracy, metric, SampleScore, ValueToFloat, Value, value_to_float, CORRECT, INCORRECT, NOANSWER, Metric
+from inspect_ai.scorer import Score, Scorer, Target, scorer, metric, SampleScore, ValueToFloat, Value, value_to_float, CORRECT, INCORRECT, NOANSWER, Metric
 from inspect_ai.solver import TaskState
 
       
@@ -59,8 +59,12 @@ def paperqa_accuracy(to_float: ValueToFloat = precision_value_to_float()) -> Met
 
 
 @scorer(metrics=[paperqa_accuracy(), paperqa_precision()])
-def paperqa_scorer(no_answer: str) -> Scorer:
-    
+def paperqa_scorer() -> Scorer:
+    """Custom inspect_ai Scorer. No partial marks. Handles custom accuracy and precision. 
+
+    Returns:
+        Scorer: For the inspect_ai interface. 
+    """
     # Create async score function
     async def score(state: TaskState, target: Target) -> Score:
         
@@ -70,6 +74,8 @@ def paperqa_scorer(no_answer: str) -> Scorer:
             
             answer = output.get("answer", "")
             explanation = output.get("explanation", "")
+            
+            no_answer = "NA"
             
             # If target is provided as JSON
             try:

@@ -1,6 +1,5 @@
 from collections.abc import Callable
 import json
-from typing import Any
 
 from inspect_ai.agent import agent
 
@@ -17,6 +16,16 @@ def bridge_agent(
     template: str | None = None,
     **kwargs
 ):
+    """Custom agent wrapper to handle the bridging mechanic in inspect_ai. Deals with lack of options in TaskState by using AG2 agents to structure outputs into json schemas.
+
+    Args:
+        custom_agent (Callable): Function containing user's custom agent. E.g. def custom_agent(prompt: str, **kwargs)
+        template (str | None, optional): Template for the prompt into custom agent. Must be able to format with a variable called 'question'. Defaults to None.
+        **kwargs: Any kwargs needed for custom agent. 
+
+    Returns:
+        Callable: Returns the run function for async processing. 
+    """
 
     
     # Give default template
@@ -90,14 +99,14 @@ if __name__ == "__main__":
         
         # Create the bridge agent with paperqa_agent as the custom agent
         # Pass paperqa_settings as a kwarg to be used by the custom agent
-        agent = bridge_agent(
+        test_agent = bridge_agent(
             custom_agent=paperqa_agent,
             template=MULTIPLE_CHOICE_TEMPLATE_BRIDGE,
             settings=paperqa_settings  # This will be passed to paperqa_agent
         )
         
         # Run the agent
-        result = await agent(test_sample)
+        result = await test_agent(test_sample)
         
         # Print the results
         print("\nTest Results:")

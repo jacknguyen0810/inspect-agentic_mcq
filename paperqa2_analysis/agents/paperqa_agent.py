@@ -5,7 +5,16 @@ from paperqa.settings import AgentSettings, AnswerSettings
 async def paperqa_agent(
     prompt: str,
     settings: Settings | None = None
-):  
+) -> str:  
+    """PaperQA agent wrapper. 
+
+    Args:
+        prompt (str): Prompt for PaperQA2
+        settings (Settings | None, optional): PaperQA2 Settings. Defaults to None.
+
+    Returns:
+        str: PaperQA answer to prompt.
+    """
     # Use provided settings or default to paperqa_settings
     settings_to_use = settings if settings is not None else paperqa_settings
     
@@ -74,8 +83,6 @@ paperqa_settings = Settings(
 if __name__ == "__main__":
     # import os
     import asyncio
-    
-    # TODO: Update the test run
     
     test_prompt = """
     Question: Approximately what percentage of topologically associated domains in the GM12878 blood cell line does DiffDomain classify as reorganized in the K562 cell line? 

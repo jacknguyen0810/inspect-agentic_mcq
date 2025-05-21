@@ -3,7 +3,6 @@
 from collections.abc import Callable
 import inspect
 
-import pandas as pd
 from pandas import DataFrame
 
 from inspect_ai import Epochs, Task, task, eval
@@ -17,13 +16,14 @@ from paperqa2_analysis.inspect_ai_custom.sample import (
 from paperqa2_analysis.inspect_ai_custom.paperqa_scorer import paperqa_scorer
 
 class MultipleChoiceEval:
-    
+    """Class for evaluating MCQ performance for inspect_ai using custom agents. 
+    """
     def __init__(
         self,
         data: DataFrame,
         agent: Callable,
         template: str | None = None,
-        no_answer: str | None = None,
+        **kwargs
     ) -> None:
         
         # Process the data into inspect_ai Dataset type
@@ -41,13 +41,15 @@ class MultipleChoiceEval:
         self.dataset = df_2_sample_bridge(data)
         
         self.agent = agent
-        
         self.template = template
-        
-        self.no_answer = no_answer
-        
+        self.kwargs = kwargs
     
     def run(self):
+        """Run the inspect_ai benchmarking. 
+
+        Returns:
+            None: Should initialise the inspect_ai interface. 
+        """
         # Create the custom task
         @task
         def custom_agent_task():
@@ -56,12 +58,11 @@ class MultipleChoiceEval:
                 solver=bridge(
                     bridge_agent(
                         custom_agent=self.agent,
-                        template=self.template
+                        template=self.template,
+                        **self.kwargs
                     )
                 ),
-                scorer=paperqa_scorer(
-                    no_answer=self.no_answer
-                ),
+                scorer=paperqa_scorer(),
                 epochs=Epochs(1, "mode")
             )
             

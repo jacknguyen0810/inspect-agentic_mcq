@@ -1,5 +1,4 @@
 import os
-import json
 
 from autogen import ConversableAgent, LLMConfig
 from pydantic import BaseModel, Field
@@ -40,7 +39,18 @@ def structured_agent(
     structure: StructuredInput | StructuredOutput,
     model: tuple | None = None,
     temp: float = 0.1,
-):
+) -> str:
+    """Agent to structure text to specified format. 
+
+    Args:
+        input_text (str): Input to format. 
+        structure (StructuredInput | StructuredOutput): Desired json schema. 
+        model (tuple | None, optional): Model provider and name e.g. (openai, "gpt-4o-mini). Defaults to None.
+        temp (float, optional): Temperature of formatting LLM. Defaults to 0.1.
+
+    Returns:
+        str: String containing json schema. Use json.load to turn into a dictionary. 
+    """
     # Default model to OpenAI gpt-4o-mini
     if model is None:
         model = ("openai", "gpt-4o-mini")
