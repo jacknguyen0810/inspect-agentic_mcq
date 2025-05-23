@@ -101,8 +101,6 @@ def structured_agent(
 
 
 if __name__ == "__main__":
-
-    # Test
     import nest_asyncio
 
     nest_asyncio.apply()
@@ -145,7 +143,9 @@ if __name__ == "__main__":
     print("-" * 50)
 
     struct_output = structured_agent(
-        input_text=na_test_prompt, structure=StructuredOutput
+        input_text=test_output, structure=StructuredOutput
     )
 
     print(struct_output)
+    
+    
