@@ -1,0 +1,43 @@
+\documentclass[12pt,a4paper]{article}
+
+% Essential packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{siunitx}
+\usepackage{cleveref}
+
+% Page layout
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+
+% Title information
+\title{Scientific Report Title}
+\author{Author Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/methods}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/conclusion}
+
+\section*{Acknowledgments}
+Acknowledge any funding, technical support, or other contributions.
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document} 
