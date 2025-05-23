@@ -45,8 +45,8 @@ if __name__ == "__main__":
         evidence_retrieval=False,
         evidence_summary_length="around 100 words",
         evidence_skip_summary=False,
-        answer_max_sources=5,
-        max_answer_attempts=5,
+        answer_max_sources=1,
+        max_answer_attempts=3,
         answer_length="1 letter"
     )
 
@@ -72,7 +72,7 @@ if __name__ == "__main__":
     )
     
     # Run the evaluation
-    print("\nRunning evaluation on full test dataset...")
+    print("\nRunning evaluation on test dataset...")
     eval_instance.run()
     print("Evaluation complete!")
     

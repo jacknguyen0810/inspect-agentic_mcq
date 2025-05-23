@@ -50,8 +50,8 @@ answer_settings = AnswerSettings(
     evidence_retrieval=False,
     evidence_summary_length="around 100 words",
     evidence_skip_summary=False,
-    answer_max_sources=5,
-    max_answer_attempts=5,
+    answer_max_sources=1,
+    max_answer_attempts=3,
     answer_length="1 letter",
 )
 
