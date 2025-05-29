@@ -18,10 +18,11 @@ classifiers = [
 ]
 
 dependencies = [
-    "paperqa2",
-    "pandas",
-    "numpy",
-    "matplotlib"
+    "inspect-ai",
+    "paper-qa>=5",
+    "ag2[openai]",
+    "pydantic",
+    "pandas"
 ]
 
 [tool.setuptools]
