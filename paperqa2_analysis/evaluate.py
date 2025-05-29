@@ -39,7 +39,11 @@ class MultipleChoiceEval:
         self.template = template
         self.kwargs = kwargs
 
-    def run(self):
+    def run(
+        self,
+        max_samples: int | None,
+        time_limit: float | None,
+    ):
         """Run the inspect_ai benchmarking.
 
         Returns:
@@ -60,7 +64,7 @@ class MultipleChoiceEval:
                 epochs=Epochs(1, "mode"),
             )
 
-        eval(custom_agent_task())
+        eval(tasks=custom_agent_task(), time_limit=time_limit, max_samples=max_samples)
 
         return None
 

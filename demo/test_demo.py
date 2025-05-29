@@ -18,7 +18,8 @@ if __name__ == "__main__":
                 "litellm_params": {
                     "model": "gpt-4o-mini",
                     "temperature": 0,
-                    "max_tokens": 4096
+                    "max_tokens": 4096,
+                    "timeout": 1200
                 }
             }
         ],
@@ -30,7 +31,8 @@ if __name__ == "__main__":
         agent_llm="gpt-4o-mini",
         agent_llm_config={
             "rate_limit": "30000 per 1 minute"
-        }
+        },
+        timeout=600.0
     )
 
     # Set up summary LLM config
@@ -73,6 +75,9 @@ if __name__ == "__main__":
     
     # Run the evaluation
     print("\nRunning evaluation on test dataset...")
-    eval_instance.run()
+    eval_instance.run(
+        max_samples=2,
+        time_limit=120.0
+    )
     print("Evaluation complete!")
     
