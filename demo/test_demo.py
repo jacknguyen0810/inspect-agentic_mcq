@@ -19,7 +19,6 @@ if __name__ == "__main__":
                     "model": "gpt-4o-mini",
                     "temperature": 0,
                     "max_tokens": 4096,
-                    "timeout": 1200
                 }
             }
         ],
@@ -32,7 +31,6 @@ if __name__ == "__main__":
         agent_llm_config={
             "rate_limit": "30000 per 1 minute"
         },
-        timeout=600.0
     )
 
     # Set up summary LLM config
@@ -45,9 +43,9 @@ if __name__ == "__main__":
         evidence_k=30,
         evidence_detailed_citations=False,
         evidence_retrieval=False,
-        evidence_summary_length="around 100 words",
+        evidence_summary_length="around 50 words",
         evidence_skip_summary=False,
-        answer_max_sources=1,
+        answer_max_sources=5,
         max_answer_attempts=3,
         answer_length="1 letter"
     )
@@ -76,8 +74,8 @@ if __name__ == "__main__":
     # Run the evaluation
     print("\nRunning evaluation on test dataset...")
     eval_instance.run(
-        max_samples=2,
-        time_limit=120.0
+        max_samples=3,
+        time_limit=300.0
     )
     print("Evaluation complete!")
     

@@ -37,7 +37,7 @@ llm_config_dict = {
 
 # Set up agent (answer search and selecting tools):
 agent_settings = AgentSettings(
-    agent_llm="gpt-4o-mini", agent_llm_config={"rate_limit": "30000 per 1 minute"}
+    agent_llm="gpt-4o-mini", agent_llm_config={"rate_limit": "30000 per 1 minute"}, timeout=1200.0
 )
 
 # Set up summary LLM config
@@ -67,6 +67,8 @@ paperqa_settings = Settings(
     verbosity=1,
     paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs",
 )
+
+
 
 
 if __name__ == "__main__":
