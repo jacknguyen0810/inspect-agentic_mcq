@@ -66,7 +66,7 @@ def structured_agent(
         temp (float, optional): Temperature of formatting LLM. Defaults to 0.1.
 
     Returns:
-        dict: Output string, and optionally token usage/cost if available.
+        dict: Output string in the desired format.
     """
     # Default model to OpenAI gpt-4o-mini
     if model is None:
@@ -97,10 +97,8 @@ def structured_agent(
     # Get the final message
     final_message = response.messages[-1]
 
-    # If token usage/cost is available, add it here (not available in ConversableAgent by default)
     return {
         "output": final_message["content"]
-        # Add token usage/cost here if available in the future
     }
 
 

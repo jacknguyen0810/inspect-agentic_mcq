@@ -51,11 +51,8 @@ class MultipleChoiceEval:
         """Run the inspect_ai benchmarking.
 
         Returns:
-            None: Should initialise the inspect_ai interface.
+            dict: Dictionary containing evaluation results, total cost, and token usage.
         """
-        # Store results for cost/token usage
-        results = []
-
         # Create the custom task
         @task
         def custom_agent_task():
@@ -70,25 +67,44 @@ class MultipleChoiceEval:
                 epochs=Epochs(1, "mode"),
             )
 
-        # Patch: run eval and collect outputs for cost/token usage
+        # Run eval and collect outputs for cost/token usage
         eval_result = eval(tasks=custom_agent_task(), time_limit=time_limit, max_samples=max_samples)
-        # If eval_result is iterable, accumulate cost/token usage
+        
+        # Initialize tracking variables
         total_cost = 0.0
         total_token_counts = {}
+        
+        # Process results if eval_result is iterable
         if hasattr(eval_result, '__iter__'):
             for r in eval_result:
-                if isinstance(r, dict):
-                    total_cost += r.get("cost", 0.0)
-                    for model, counts in r.get("token_counts", {}).items():
+                # Get cost and token counts from the eval log
+                if hasattr(r, 'eval') and hasattr(r.eval, 'cost'):
+                    total_cost += float(r.eval.cost)
+                
+                if hasattr(r, 'eval') and hasattr(r.eval, 'token_counts'):
+                    for model, counts in r.eval.token_counts.items():
                         if model not in total_token_counts:
-                            total_token_counts[model] = [0, 0]
-                        total_token_counts[model][0] += counts[0]
-                        total_token_counts[model][1] += counts[1]
+                            total_token_counts[model] = [0, 0]  # [prompt_tokens, completion_tokens]
+                        if isinstance(counts, (list, tuple)) and len(counts) >= 2:
+                            total_token_counts[model][0] += int(counts[0])
+                            total_token_counts[model][1] += int(counts[1])
+        
+        # Update instance variables
+        self.cost = total_cost
+        self.token_counts = total_token_counts
+        
+        # Print summary
         print("\n--- Evaluation Cost Summary ---")
         print(f"Total cost: ${total_cost:.6f}")
         print(f"Total token usage: {total_token_counts}")
         print("------------------------------\n")
-        return None
+        
+        # Return results
+        return {
+            "cost": total_cost,
+            "token_counts": total_token_counts,
+            "eval_result": eval_result
+        }
 
     def _check_required_columns(
         self, df: DataFrame, required_columns: list[str]

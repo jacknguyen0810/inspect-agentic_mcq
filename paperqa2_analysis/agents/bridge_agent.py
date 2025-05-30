@@ -28,7 +28,6 @@ def bridge_agent(custom_agent: Callable, template: str | None = None, **kwargs):
         template = MULTIPLE_CHOICE_TEMPLATE_BRIDGE
 
     async def run(sample: dict[str]) -> dict:
-
         # Use structured agent to format the input
         input_result = structured_agent(sample["messages"][0]["content"], StructuredInput)
         message = json.loads(input_result["output"])
@@ -40,15 +39,23 @@ def bridge_agent(custom_agent: Callable, template: str | None = None, **kwargs):
 
         # Pass arguments to custom agent, including any kwargs
         agent_result = await custom_agent(query, **kwargs)
+        
         # Add the target to the string response so that it can be parsed by the structured agent
         output_str = agent_result["answer"] + f"\nTarget: {target}"
         formatted_result = structured_agent(output_str, StructuredOutput)
 
-        return {
+        # Create the output dictionary with all metrics
+        output = {
             "output": formatted_result["output"],
             "cost": agent_result.get("cost", 0.0),
             "token_counts": agent_result.get("token_counts", {}),
+            "metrics": {
+                "cost": agent_result.get("cost", 0.0),
+                "token_counts": agent_result.get("token_counts", {})
+            }
         }
+
+        return output
 
     return run
 
