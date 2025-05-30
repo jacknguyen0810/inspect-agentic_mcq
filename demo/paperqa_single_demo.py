@@ -10,6 +10,13 @@ if __name__ == "__main__":
     # Import data
     litqa2_test_data = pd.read_parquet("/root/paperQA2_analysis/data/LitQA_data/test-00000-of-00001.parquet")
     
+    # Create mini dataset with one sample
+    mini_data = pd.DataFrame([{
+        "question": litqa2_test_data["question"][0],
+        "ideal": litqa2_test_data["ideal"][0],
+        "distractors": litqa2_test_data["distractors"][0]
+    }])
+    
     # Set up LLM config (main LLM for reasoning, extract metadata, ...)
     llm_config_dict = {
         "model_list": [
@@ -18,7 +25,7 @@ if __name__ == "__main__":
                 "litellm_params": {
                     "model": "gpt-4o-mini",
                     "temperature": 0,
-                    "max_tokens": 4096,
+                    "max_tokens": 4096
                 }
             }
         ],
@@ -30,7 +37,7 @@ if __name__ == "__main__":
         agent_llm="gpt-4o-mini",
         agent_llm_config={
             "rate_limit": "30000 per 1 minute"
-        },
+        }
     )
 
     # Set up summary LLM config
@@ -43,10 +50,10 @@ if __name__ == "__main__":
         evidence_k=30,
         evidence_detailed_citations=False,
         evidence_retrieval=False,
-        evidence_summary_length="around 50 words",
+        evidence_summary_length="around 30 words",
         evidence_skip_summary=False,
-        answer_max_sources=5,
-        max_answer_attempts=3,
+        answer_max_sources=3,
+        max_answer_attempts=1,
         answer_length="1 letter"
     )
 
@@ -63,9 +70,9 @@ if __name__ == "__main__":
         paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs"
     )
     
-    # Create the evaluation instance with full test dataset
+     # Create the evaluation instance with full test dataset
     eval_instance = MultipleChoiceEval(
-        data=litqa2_test_data,
+        data=mini_data,
         agent=paperqa_agent,
         template=None,  # Will use default template
         settings=paperqa_settings  # Pass settings as a kwarg

@@ -38,6 +38,10 @@ class MultipleChoiceEval:
         self.agent = agent
         self.template = template
         self.kwargs = kwargs
+        
+        # Cost and token usage
+        self.cost = 0.0
+        self.token_counts = {}
 
     def run(
         self,
@@ -47,9 +51,8 @@ class MultipleChoiceEval:
         """Run the inspect_ai benchmarking.
 
         Returns:
-            None: Should initialise the inspect_ai interface.
+            dict: Dictionary containing evaluation results, total cost, and token usage.
         """
-
         # Create the custom task
         @task
         def custom_agent_task():
@@ -64,9 +67,44 @@ class MultipleChoiceEval:
                 epochs=Epochs(1, "mode"),
             )
 
-        eval(tasks=custom_agent_task(), time_limit=time_limit, max_samples=max_samples)
-
-        return None
+        # Run eval and collect outputs for cost/token usage
+        eval_result = eval(tasks=custom_agent_task(), time_limit=time_limit, max_samples=max_samples)
+        
+        # Initialize tracking variables
+        total_cost = 0.0
+        total_token_counts = {}
+        
+        # Process results if eval_result is iterable
+        if hasattr(eval_result, '__iter__'):
+            for r in eval_result:
+                # Get cost and token counts from the eval log
+                if hasattr(r, 'eval') and hasattr(r.eval, 'cost'):
+                    total_cost += float(r.eval.cost)
+                
+                if hasattr(r, 'eval') and hasattr(r.eval, 'token_counts'):
+                    for model, counts in r.eval.token_counts.items():
+                        if model not in total_token_counts:
+                            total_token_counts[model] = [0, 0]  # [prompt_tokens, completion_tokens]
+                        if isinstance(counts, (list, tuple)) and len(counts) >= 2:
+                            total_token_counts[model][0] += int(counts[0])
+                            total_token_counts[model][1] += int(counts[1])
+        
+        # Update instance variables
+        self.cost = total_cost
+        self.token_counts = total_token_counts
+        
+        # Print summary
+        print("\n--- Evaluation Cost Summary ---")
+        print(f"Total cost: ${total_cost:.6f}")
+        print(f"Total token usage: {total_token_counts}")
+        print("------------------------------\n")
+        
+        # Return results
+        return {
+            "cost": total_cost,
+            "token_counts": total_token_counts,
+            "eval_result": eval_result
+        }
 
     def _check_required_columns(
         self, df: DataFrame, required_columns: list[str]
@@ -85,7 +123,7 @@ class MultipleChoiceEval:
             raise ValueError(f"DataFrame is missing required columns: {missing_cols}")
 
     def _validate_custom_agent(self, custom_agent: Callable) -> None:
-        """Validate that the custom agent is a function that takes in and returns a string.
+        """Validate that the custom agent is a function that takes in and returns a dictionary with answer, cost, and token counts.
 
         Args:
             custom_agent: The custom agent function to validate
@@ -108,7 +146,7 @@ class MultipleChoiceEval:
 
         # Check the return type annotation if it exists
         return_annotation = sig.return_annotation
-        if return_annotation != inspect.Signature.empty and return_annotation != str:
+        if return_annotation != inspect.Signature.empty and return_annotation != dict:
             raise TypeError(
-                f"Custom agent must return a string, got return type annotation {return_annotation}"
+                f"Custom agent must return a dict with 'answer', 'cost', and 'token_counts' keys, got return type annotation {return_annotation}"
             )

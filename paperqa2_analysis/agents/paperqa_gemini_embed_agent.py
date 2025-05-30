@@ -1,9 +1,14 @@
 from paperqa import Settings, agent_query
 from paperqa.settings import AgentSettings, AnswerSettings
+import os
 
+# Get API key from environment
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    raise ValueError("GOOGLE_API_KEY environment variable is not set. Please set it with your Gemini API key.")
 
-async def paperqa_agent(prompt: str, settings: Settings | None = None) -> dict:
-    """PaperQA agent wrapper.
+async def paperqa_gemini_agent(prompt: str, settings: Settings | None = None) -> dict:
+    """PaperQA (with Gemini Embeddings) agent wrapper.
 
     Args:
         prompt (str): Prompt for PaperQA2
@@ -15,34 +20,13 @@ async def paperqa_agent(prompt: str, settings: Settings | None = None) -> dict:
     # Use provided settings or default to paperqa_settings
     settings_to_use = settings if settings is not None else paperqa_settings
 
-    try:
-        response = await agent_query(query=prompt, settings=settings_to_use)
-        session = response.session
-        
-        # Get cost and token counts from the session
-        cost = float(session.cost) if hasattr(session, 'cost') else 0.0
-        token_counts = {}
-        
-        # Get token counts if available
-        if hasattr(session, 'token_counts'):
-            for model, counts in session.token_counts.items():
-                if isinstance(counts, (list, tuple)) and len(counts) >= 2:
-                    token_counts[model] = [int(counts[0]), int(counts[1])]
-                else:
-                    token_counts[model] = [0, 0]
-        
-        return {
-            "answer": session.answer,
-            "cost": cost,
-            "token_counts": token_counts
-        }
-    except Exception as e:
-        print(f"Error in paperqa_agent: {str(e)}")
-        return {
-            "answer": "Error processing query",
-            "cost": 0.0,
-            "token_counts": {}
-        }
+    response = await agent_query(query=prompt, settings=settings_to_use)
+    session = response.session
+    return {
+        "answer": session.answer,
+        "cost": session.cost,
+        "token_counts": session.token_counts,
+    }
 
 
 # Set up LLM config (main LLM for reasoning, extract metadata, ...)
@@ -91,7 +75,13 @@ paperqa_settings = Settings(
     batch_size=1,
     verbosity=1,
     paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs",
+    embedding="gemini/text-embedding-004",
+    parsing={
+        "use_doc_details": False
+    }
 )
+
+# Currently avoids getting paper metadata to prevent hitting Semantic Scholar API limits. 
 
 
 
@@ -115,7 +105,7 @@ if __name__ == "__main__":
 
     async def test_paperqa_agent():
         # Run the agent directly
-        result = await paperqa_agent(prompt=test_prompt)
+        result = await paperqa_gemini_agent(prompt=test_prompt)
 
         # Print the result
         print("\nTest Results:")
