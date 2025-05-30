@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # Run the evaluation
     print("\nRunning evaluation on test dataset...")
     eval_results = eval_instance.run(
-        max_samples=3,
+        max_samples=2,
         time_limit=300.0
     )
     print("Evaluation complete!")
