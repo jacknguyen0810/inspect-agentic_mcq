@@ -50,10 +50,10 @@ if __name__ == "__main__":
         evidence_k=30,
         evidence_detailed_citations=False,
         evidence_retrieval=False,
-        evidence_summary_length="around 100 words",
+        evidence_summary_length="around 30 words",
         evidence_skip_summary=False,
-        answer_max_sources=5,
-        max_answer_attempts=5,
+        answer_max_sources=3,
+        max_answer_attempts=1,
         answer_length="1 letter"
     )
 
@@ -70,16 +70,19 @@ if __name__ == "__main__":
         paper_directory="/root/paperQA2_analysis/data/LitQA_data/LitQA2_test_pdfs"
     )
     
-    # Create the evaluation instance
+     # Create the evaluation instance with full test dataset
     eval_instance = MultipleChoiceEval(
         data=mini_data,
         agent=paperqa_agent,
         template=None,  # Will use default template
-        no_answer="NA"  # Specify the no answer option
+        settings=paperqa_settings  # Pass settings as a kwarg
     )
     
     # Run the evaluation
-    print("\nRunning evaluation on mini dataset...")
-    eval_instance.run()
+    print("\nRunning evaluation on test dataset...")
+    eval_instance.run(
+        max_samples=3,
+        time_limit=300.0
+    )
     print("Evaluation complete!")
     

@@ -46,7 +46,7 @@ if __name__ == "__main__":
         evidence_summary_length="around 50 words",
         evidence_skip_summary=False,
         answer_max_sources=5,
-        max_answer_attempts=3,
+        max_answer_attempts=1,
         answer_length="1 letter"
     )
 
