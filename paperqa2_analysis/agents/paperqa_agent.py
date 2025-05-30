@@ -2,7 +2,7 @@ from paperqa import Settings, agent_query
 from paperqa.settings import AgentSettings, AnswerSettings
 
 
-async def paperqa_agent(prompt: str, settings: Settings | None = None) -> str:
+async def paperqa_agent(prompt: str, settings: Settings | None = None) -> dict:
     """PaperQA agent wrapper.
 
     Args:
@@ -10,23 +10,27 @@ async def paperqa_agent(prompt: str, settings: Settings | None = None) -> str:
         settings (Settings | None, optional): PaperQA2 Settings. Defaults to None.
 
     Returns:
-        str: PaperQA answer to prompt.
+        dict: PaperQA answer, cost, and token usage.
     """
     # Use provided settings or default to paperqa_settings
     settings_to_use = settings if settings is not None else paperqa_settings
 
     response = await agent_query(query=prompt, settings=settings_to_use)
-
-    return response.session.answer
+    session = response.session
+    return {
+        "answer": session.answer,
+        "cost": session.cost,
+        "token_counts": session.token_counts,
+    }
 
 
 # Set up LLM config (main LLM for reasoning, extract metadata, ...)
 llm_config_dict = {
     "model_list": [
         {
-            "model_name": "gpt-4o-mini",
+            "model_name": "gpt-4.1",
             "litellm_params": {
-                "model": "gpt-4o-mini",
+                "model": "gpt-4.1",
                 "temperature": 0,
                 "max_tokens": 4096,
             },
@@ -37,7 +41,7 @@ llm_config_dict = {
 
 # Set up agent (answer search and selecting tools):
 agent_settings = AgentSettings(
-    agent_llm="gpt-4o-mini", agent_llm_config={"rate_limit": "30000 per 1 minute"}, timeout=1200.0
+    agent_llm="gpt-4.1", agent_llm_config={"rate_limit": "30000 per 1 minute"}, timeout=1200.0
 )
 
 # Set up summary LLM config
@@ -57,9 +61,9 @@ answer_settings = AnswerSettings(
 
 # Set up the final settings object
 paperqa_settings = Settings(
-    llm="gpt-4o-mini",
+    llm="gpt-4.1",
     llm_config=llm_config_dict,
-    summary_llm="gpt-4o-mini",
+    summary_llm="gpt-4.1",
     summary_llm_config=summary_config_dict,
     agent=agent_settings,
     temperature=0,
@@ -97,11 +101,13 @@ if __name__ == "__main__":
         print("-" * 50)
         print(f"Input question: {test_prompt.strip()}")
         print("\n")
-        print(f"Agent output: {result}")
+        print(f"Agent output: {result['answer']}")
+        print(f"Cost: {result['cost']}")
+        print(f"Token counts: {result['token_counts']}")
         print("-" * 50)
 
         # Verify the output format
-        if not isinstance(result, str):
+        if not isinstance(result["answer"], str):
             print("❌ Error: Result is not a string")
             return False
 

@@ -48,7 +48,7 @@ def df_2_sample_bridge(data: DataFrame) -> MemoryDataset:
         data (DataFrame): DataFrame containing required information.
 
     Returns:
-        MemoryDataset: Full MemeoryDataset for inspect_ai processing
+        MemoryDataset: Full MemoryDataset for inspect_ai processing
     """
     records = data.to_dict(orient="records")
     samples = [record_to_sample_custom(i) for i in records]
@@ -56,6 +56,27 @@ def df_2_sample_bridge(data: DataFrame) -> MemoryDataset:
 
 
 UNCERTAIN_ANSWER_CHOICE = "Insufficient information to answer the question."
+
+def record_to_sample(record: dict) -> Sample:
+
+    # Concatenate the choices
+    choices = [record["ideal"]]
+    choices.extend(record["distractors"])
+
+    # Shuffle because we want the final answer to be unsure
+    # Shuffle the dataset
+    random.shuffle(choices)
+
+    # Find the ideal answer
+    ideal_idx = choices.index(record["ideal"])
+
+    # Make the message a part of the Sample
+    return Sample(input=record["question"], choices=choices, target=f"{chr(65 + ideal_idx)}")
+
+def df_2_sample(data: DataFrame) -> MemoryDataset:
+    records = data.to_dict(orient="records")
+    samples = [record_to_sample(i) for i in records]
+    return MemoryDataset(samples)
 
 
 if __name__ == "__main__":
