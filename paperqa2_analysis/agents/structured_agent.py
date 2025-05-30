@@ -56,7 +56,7 @@ def structured_agent(
     structure: StructuredInput | StructuredOutput,
     model: tuple | None = None,
     temp: float = 0.1,
-) -> str:
+) -> dict:
     """Agent to structure text to specified format.
 
     Args:
@@ -66,7 +66,7 @@ def structured_agent(
         temp (float, optional): Temperature of formatting LLM. Defaults to 0.1.
 
     Returns:
-        str: String containing json schema. Use json.load to turn into a dictionary.
+        dict: Output string, and optionally token usage/cost if available.
     """
     # Default model to OpenAI gpt-4o-mini
     if model is None:
@@ -97,7 +97,11 @@ def structured_agent(
     # Get the final message
     final_message = response.messages[-1]
 
-    return final_message["content"]
+    # If token usage/cost is available, add it here (not available in ConversableAgent by default)
+    return {
+        "output": final_message["content"]
+        # Add token usage/cost here if available in the future
+    }
 
 
 if __name__ == "__main__":

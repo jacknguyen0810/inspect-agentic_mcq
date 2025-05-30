@@ -38,6 +38,10 @@ class MultipleChoiceEval:
         self.agent = agent
         self.template = template
         self.kwargs = kwargs
+        
+        # Cost and token usage
+        self.cost = 0.0
+        self.token_counts = {}
 
     def run(
         self,
@@ -49,6 +53,8 @@ class MultipleChoiceEval:
         Returns:
             None: Should initialise the inspect_ai interface.
         """
+        # Store results for cost/token usage
+        results = []
 
         # Create the custom task
         @task
@@ -64,8 +70,24 @@ class MultipleChoiceEval:
                 epochs=Epochs(1, "mode"),
             )
 
-        eval(tasks=custom_agent_task(), time_limit=time_limit, max_samples=max_samples)
-
+        # Patch: run eval and collect outputs for cost/token usage
+        eval_result = eval(tasks=custom_agent_task(), time_limit=time_limit, max_samples=max_samples)
+        # If eval_result is iterable, accumulate cost/token usage
+        total_cost = 0.0
+        total_token_counts = {}
+        if hasattr(eval_result, '__iter__'):
+            for r in eval_result:
+                if isinstance(r, dict):
+                    total_cost += r.get("cost", 0.0)
+                    for model, counts in r.get("token_counts", {}).items():
+                        if model not in total_token_counts:
+                            total_token_counts[model] = [0, 0]
+                        total_token_counts[model][0] += counts[0]
+                        total_token_counts[model][1] += counts[1]
+        print("\n--- Evaluation Cost Summary ---")
+        print(f"Total cost: ${total_cost:.6f}")
+        print(f"Total token usage: {total_token_counts}")
+        print("------------------------------\n")
         return None
 
     def _check_required_columns(
@@ -85,7 +107,7 @@ class MultipleChoiceEval:
             raise ValueError(f"DataFrame is missing required columns: {missing_cols}")
 
     def _validate_custom_agent(self, custom_agent: Callable) -> None:
-        """Validate that the custom agent is a function that takes in and returns a string.
+        """Validate that the custom agent is a function that takes in and returns a dictionary with answer, cost, and token counts.
 
         Args:
             custom_agent: The custom agent function to validate
@@ -108,7 +130,7 @@ class MultipleChoiceEval:
 
         # Check the return type annotation if it exists
         return_annotation = sig.return_annotation
-        if return_annotation != inspect.Signature.empty and return_annotation != str:
+        if return_annotation != inspect.Signature.empty and return_annotation != dict:
             raise TypeError(
-                f"Custom agent must return a string, got return type annotation {return_annotation}"
+                f"Custom agent must return a dict with 'answer', 'cost', and 'token_counts' keys, got return type annotation {return_annotation}"
             )
