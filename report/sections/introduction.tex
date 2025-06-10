@@ -2,8 +2,59 @@
 \label{sec:introduction}
 The introduction should provide the background and context for your research. It should:
 \begin{itemize}
-    \item State the research problem
-    \item Review relevant literature
-    \item Outline the objectives
+    \item Research Problem Presented, and Claims in the Original Paper
+    \item Retrieval Augmented Generation
+    \item 
     \item Explain the significance of the work
-\end{itemize} 
+\end{itemize}
+
+Large Language Models (LLMs) have the potential to help scientists with retrieving, synthesizing, and summarizing the scientific literature CITE. 
+However, issues such as hallucinations CITE, lack of detail CITE, and underdeveloped retrieval and reasoning benchmarks, hamper the direct use of LLMs in scientific research. \\
+
+The field is rapidly developing, with new models such as Google's Gemini 2.5 CITE and OpenAI's o3 CITE being able to 'reason', and excel at coding, maths, and langaage benchmarks. 
+This also highlights the developments of new cutting-edge benchmarks for scientific performance in areas such as scientific discovery CITE, analysis CITE, reasnoning CITE, programming CITE,
+CITE, and mathematics CITE. \\
+
+Alongside the development of the fundamental models themselves, techniques such as Retreival Augemented Generation (RAG) and the use of Multi-Agent Systems (MAS) allowed better use of LLMs in scientific research. \\
+
+\subsection{Retrieval Augmented Generation}
+RAG address issues found within foundational generative models by combining two components: a retrieval component and a generative component. 
+For a given prompt, the retrieval levarages dense vector respresentations to summarise and find relevant information from large data sources. 
+These representations are then given to the generative component (LLM), which generates responses grounded in the retrieved knowledge. 
+This helps prevent hallucinations, as the generative process is grounded in (assumed) factually-correct, external knowledge. 
+This is why RAG has potential applications in a wide number of fields (open-domain question answering, scientific discovery, medical diagnoses, \dots), where factual accuracy and contextual understanding is crucial CITE.\\
+
+\subsection{Multi-Agent Systems}
+MAS enhances the capabilities of a single LLM by leveraging the collaboration of LLMs and the fact that LLMs can be fine-tuned to perform specific tasks CITE. 
+Frameworks such as Microsoft's AG2 CITE and Google's LangChain allow the interaction between agents and LLMs to better perform at specific tasks. 
+This interaction between agents, with the ability to 'converse' in AG2's case, is comparable to a team of scientists working together. 
+This marks a major leap forward toward automated scientific discovery, with tools such \texttt{cmbagent} CITE and \texttt{Robin} CITE being developed.\\
+
+\subsection{PaperQA2}
+To make scientific discoveries, one must be able to synthesise scientific knowledge.
+Skarlinski et. al. believe this can be broken down into three vital tasks: scientific question answering, summarising, and detecting contradictions in the literature.
+In their paper, it is shown that their developed tool, PaperQA2, outperforms the human benchmark in all three areas CITE. 
+The focus of this report is to understand and reproduce the question-answering result. \\
+
+\subsubsection{PaperQA2 Architecture}
+PaperQA2 is RAG agent that treats retrieval as a multi-step agent task, comprised of multiple tools CITE. 
+The Gather Papers tool transforms the user prompt into a keyword search to find suitable papers. 
+The papers are then parsed into chunks of information, and then ranks these chunks. 
+What makes PaperQA stand out, is the fact that these chunks are then reranked (by relevance) and contextually summarised by an LLM.
+This allowed irrelevant chunks to be excluded, and is 'critical' to RAG CITE.
+The framework also includes a Citation Traversal tool, exploiting citation graphs to provide additional relevant sources. \\
+
+\subsubsection{Key Result}
+The paper claims that PaperQA's performance beats the human benchmark, specifically for the precision of questions answered, achieving a precision of $73.8\%$. The benchmark metrics are accuracy and precision. \\
+
+\begin{equation}
+    Accuracy = \frac{Correct Questions}{All Questions}
+\end{equation}
+
+
+\begin{equation}
+    Precision = \frac{Correct Questions}{Answered Questions}
+\end{equation}
+
+The process of evaluating the performance of PaperQA2 was to ask questions, where the answers were found in newly published papers and could not be inferred from either the title, abstract, or conclusion. \\
+

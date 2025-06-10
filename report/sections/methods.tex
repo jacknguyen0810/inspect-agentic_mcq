@@ -1,9 +1,21 @@
 \section{Methods}
 \label{sec:methods}
-Describe the methodology used in your research. This section should be detailed enough to allow other researchers to reproduce your work.
 
 \subsection{Data Collection}
-Describe how the data was collected.
+The data used to train and evaluate PaperQA2 was found on HuggingFace. 
+This contained information, such as the question proposed, true answer, distractor values, the orignal paper DOI, and metadata.
+Due to licensing issues, the actual papers themselves were not directly available, and so they had to be manually retrieved from their DOIs. 
+The evaluation papers were made up of both the training and test set.\\
 
-\subsection{Analysis Methods}
-Explain the methods used for data analysis. 
+Once the papers were collated, some initial investigation of the papers themselves were conducted. 
+Figure CITE shows the years in which the papers were published. 
+The criteria for papers was that they were published after the GPT Training Cutoff in September 2021. 
+However, a number of the papers did not meet this criteria, and were subsequently removed from the evaluation papers. \\
+
+HuggingFace data Retrieval
+Incorrect Papers in the original Paper
+
+\subsection{Evaluation Methodology}
+The field of LLMS, multi-agent AI, and RAG are new and ever-changing.
+This highlights a need for a unified system to benchmark the performance of these tools.
+The UK's AI Security Institute (AISI) released an open-source framework called $\texttt{inspect_ai}$ to easily evaluate the performance of LLMs CITE. 
