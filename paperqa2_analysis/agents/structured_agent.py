@@ -27,14 +27,14 @@ class StructuredOutput(BaseModel):
     citations: list[str] = Field(
         ..., description="Citations, a list of citations found within the text."
     )
-    target: str = Field(..., description="The target answer, in the format of LETTER")
+    # target: str = Field(..., description="The target answer, in the format of LETTER")
 
     def format(self) -> dict:
         return {
             "Answer": self.answer,
             "Explanation": self.explanation,
             "Citations": self.citations,
-            "Target": self.target,
+            # "Target": self.target,
         }
         # return f"Answer: {self.answer}\nExplanation: {self.explanation}\nCitations: {self.citations}"
 
