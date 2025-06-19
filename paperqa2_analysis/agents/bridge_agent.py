@@ -28,6 +28,7 @@ def bridge_agent(custom_agent: Callable, template: str | None = None, **kwargs):
         template = MULTIPLE_CHOICE_TEMPLATE_BRIDGE
 
     async def run(sample: dict[str]) -> dict:
+        print(sample)
         # Use structured agent to format the input
         input_result = structured_agent(sample["messages"][0]["content"], StructuredInput)
         message = json.loads(input_result["output"])
@@ -115,18 +116,18 @@ if __name__ == "__main__":
 
         # Verify the output format
         if not isinstance(result, dict):
-            print("❌ Error: Result is not a dictionary")
+            print("Error: Result is not a dictionary")
             return False
 
         if "output" not in result:
-            print("❌ Error: Result does not contain 'output' key")
+            print("Error: Result does not contain 'output' key")
             return False
 
         if not isinstance(result["output"], str):
-            print("❌ Error: Output is not a string")
+            print("Error: Output is not a string")
             return False
 
-        print("✅ All tests passed!")
+        print("All tests passed!")
         return True
 
     # Run the test
