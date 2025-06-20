@@ -18,11 +18,11 @@ class StructuredInput(BaseModel):
 class StructuredOutput(BaseModel):
     answer: str = Field(
         ...,
-        description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen",
+        description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen. If there is an error, return NA.",
     )
     explanation: str = Field(
         ...,
-        description="Explanation, the full explanation of the answer with any citations found within the text.",
+        description="Explanation, the full explanation of the answer with any citations found within the text. If there is an error, just the single word ERROR.",
     )
     citations: list[str] = Field(
         ..., description="Citations, a list of citations found within the text."
