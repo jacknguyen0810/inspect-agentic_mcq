@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     # Set up agent (answer search and selecting tools):
     agent_settings = AgentSettings(
-        agent_llm="gpt-4o-mini", agent_llm_config={"rate_limit": "30000 per 1 minute"}, timeout=1200.0
+        agent_llm="gpt-4o-mini", agent_llm_config={"rate_limit": "30000 per 1 minute"}
     )
 
     # Set up summary LLM config
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         evidence_summary_length="around 100 words",
         evidence_skip_summary=False,
         answer_max_sources=1,
-        max_answer_attempts=3,
+        max_answer_attempts=5,
         answer_length="1 letter",
     )
 
@@ -74,8 +74,8 @@ if __name__ == "__main__":
     # Run the evaluation
     print("\nRunning evaluation on test dataset...")
     eval_results = eval_instance.run(
-        max_samples=2,
-        time_limit=300.0
+        max_samples=1,
+        time_limit=500.0
     )
     print("Evaluation complete!")
     
