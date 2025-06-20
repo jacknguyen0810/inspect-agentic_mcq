@@ -14,9 +14,9 @@ if __name__ == "__main__":
     llm_config_dict = {
         "model_list": [
             {
-                "model_name": "gpt-4.1",
+                "model_name": "gpt-4o-mini",
                 "litellm_params": {
-                    "model": "gpt-4.1",
+                    "model": "gpt-4o-mini",
                     "temperature": 0,
                     "max_tokens": 4096,
                 }
@@ -27,7 +27,7 @@ if __name__ == "__main__":
 
     # Set up agent (answer search and selecting tools):
     agent_settings = AgentSettings(
-        agent_llm="gpt-4.1",
+        agent_llm="gpt-4o-mini",
         agent_llm_config={
             "rate_limit": "30000 per 1 minute"
         },
@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # Set up summary LLM config
     summary_config_dict = {
-        "rate_limit": {"gpt-4.1": "30000 per 1 minute"}
+        "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}
     }
 
     # Set up answer format
@@ -46,15 +46,15 @@ if __name__ == "__main__":
         evidence_summary_length="around 30 words",
         evidence_skip_summary=False,
         answer_max_sources=5,
-        max_answer_attempts=3,
+        max_answer_attempts=1,
         answer_length="1 letter"
     )
 
     # Set up the final settings object
     paperqa_settings = Settings(
-        llm="gpt-4.1",
+        llm="gpt-4o-mini",
         llm_config=llm_config_dict,
-        summary_llm="gpt-4.1",
+        summary_llm="gpt-4o-mini",
         summary_llm_config=summary_config_dict,
         agent=agent_settings,
         temperature=0,
