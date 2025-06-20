@@ -18,23 +18,23 @@ class StructuredInput(BaseModel):
 class StructuredOutput(BaseModel):
     answer: str = Field(
         ...,
-        description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen",
+        description="Answer, the single letter answer to the question, in the format of LETTER or NA if NA is chosen. If there is an error, return NA.",
     )
     explanation: str = Field(
         ...,
-        description="Explanation, the full explanation of the answer with any citations found within the text.",
+        description="Explanation, the full explanation of the answer with any citations found within the text. Only if there is an error, explain the error in a sentence in the format: ERROR: Error Explanation..",
     )
     citations: list[str] = Field(
         ..., description="Citations, a list of citations found within the text."
     )
-    target: str = Field(..., description="The target answer, in the format of LETTER")
+    # target: str = Field(..., description="The target answer, in the format of LETTER")
 
     def format(self) -> dict:
         return {
             "Answer": self.answer,
             "Explanation": self.explanation,
             "Citations": self.citations,
-            "Target": self.target,
+            # "Target": self.target,
         }
         # return f"Answer: {self.answer}\nExplanation: {self.explanation}\nCitations: {self.citations}"
 
