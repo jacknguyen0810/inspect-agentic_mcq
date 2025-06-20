@@ -46,7 +46,7 @@ if __name__ == "__main__":
         evidence_summary_length="around 50 words",
         evidence_skip_summary=False,
         answer_max_sources=5,
-        max_answer_attempts=1,
+        max_answer_attempts=3,
         answer_length="1 letter"
     )
 
@@ -74,8 +74,8 @@ if __name__ == "__main__":
     # Run the evaluation
     print("\nRunning evaluation on test dataset...")
     eval_instance.run(
-        max_samples=3,
-        time_limit=300.0
+        max_samples=1,
+        time_limit=500.0
     )
     print("Evaluation complete!")
     

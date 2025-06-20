@@ -22,7 +22,7 @@ class StructuredOutput(BaseModel):
     )
     explanation: str = Field(
         ...,
-        description="Explanation, the full explanation of the answer with any citations found within the text. If there is an error, just the single word ERROR.",
+        description="Explanation, the full explanation of the answer with any citations found within the text. Only if there is an error, explain the error in a sentence in the format: ERROR: Error Explanation..",
     )
     citations: list[str] = Field(
         ..., description="Citations, a list of citations found within the text."
