@@ -22,7 +22,7 @@ if __name__ == "__main__":
                 }
             }
         ],
-        "rate_limit": {"gpt-4.1": "30000 per 1 minute"}
+        "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}
     }
 
     # Set up agent (answer search and selecting tools):
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         evidence_retrieval=False,
         evidence_summary_length="around 30 words",
         evidence_skip_summary=False,
-        answer_max_sources=5,
+        answer_max_sources=15,
         max_answer_attempts=1,
         answer_length="1 letter"
     )
