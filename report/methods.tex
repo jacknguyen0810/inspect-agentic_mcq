@@ -33,7 +33,7 @@ The need for a consistent format of the input was related to the evaluation meth
 
 \subsection{Evaluation and Insepct AI}
 
-Inspect AI is a framework to evaluate the performance of LLMs by the UK's AI Securoty Institute. Inspect AI's \texttt{eval} tool allows for rapid performance evaluation by running LLM calls asynchonously. \texttt{eval} function consists of three parts: a dataset, a solver, and a scorer. The dataset is made up of \texttt{Samples}, which correspond to an individual task, or multiple choice question in this case. Each \texttt{Sample} contains fields such as inputs (which corresponds to our question), choices, and targets. The solver corresponds to the LLM system used to answer the question, and the scorer is the evaluation metric. \\
+Inspect AI is a framework to evaluate the performance of LLMs by the UK's AI Securoty Institute. Inspect AI's \texttt{eval} tool allows for rapid performance evaluation by running LLM calls asynchonously. \texttt{eval} function consists of three parts: a dataset, a solver, and a scorer. The dataset is made up of \texttt{Samples}, which correspond to an individual task, or multiple choice question in this case. Each \texttt{Sample} contains fields such as inputs (which corresponds to our question), choices, and targets. The solver corresponds to the LLM system used to answer the question, and the scorer is the evaluation metric. The primary benefit of using Inspect AI is that it provides a useful and intuitive interface for the user to monitor their evaluations.\\
 
 \texttt{inspect\_evals} CITE is a custom library for evaluating various LLM's performances on benchamrks such as LitQA. However, it is only compatible with single LLMs, not multi-agent systems. \\
 
@@ -53,7 +53,7 @@ Another hyperparameter that was changed was the text embedding model used to enc
 Within PaperQA there are also two key parameters that the authors varied to find out the effect of the performance. First was the Answer Cutoff (\texttt{max\_sources})hyperparameter, which limits the maximum number of sources used by PaperQA to generate its response. This happens after the RCS step, so it is looking at the top-ranked answers. The other hyperparameter is the Consider Sources or \texttt{evidence\_k}, which happens during the initial document retrieval step. The best way to describe the difference between them is using an analogy: a researcher will take the 30 most promising articles from a library (this is the \texttt{evidence\_k}) to complete this research. From these 30 articles, the researcher then skim reads them and picks the best 5 (this is the \texttt{max\_sources}) to read thouroughly and use to inform their research. Within the paper, the default values for \texttt{max\_sources} and \texttt{evidence\_k} were 5 and 30, respectively. If the \texttt{evidence\_k} is lower than the \texttt{max\_sources}, then the \texttt{max\_sources} would be automatically lowered to match. 
 In the paper, the \texttt{max\_sources} was set to 15, but its performance was worse, and the result displayed in the paper was using the an \texttt{max\_sources} of 5, hence 5 was used as the defualt in the experiement.\\
 
-TODO turn off RCS. 
+PaperQA differenciates itself from other RAG systems by employing RCS. To test how crucial this is to the performance of RCS, an experiement where it was turned off was also performed. \\
 
 Other hyperparameters, such as temperature, were kept the same throughout the experiments. \\
 
