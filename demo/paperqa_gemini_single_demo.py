@@ -1,3 +1,7 @@
+import os
+from dotenv import load_dotenv
+
+
 import pandas as pd
 
 from paperqa import Settings
@@ -7,6 +11,10 @@ from paperqa2_analysis.evaluate import MultipleChoiceEval
 from paperqa2_analysis.agents.paperqa_agent import paperqa_agent
 
 if __name__ == "__main__":
+    # Get Google Credentials for Gemini
+    load_dotenv()
+    
+    
     # Get the dataset
     # Import data
     litqa2_test_data = pd.read_parquet("/root/paperQA2_analysis/data/LitQA_data/test-00000-of-00001.parquet")

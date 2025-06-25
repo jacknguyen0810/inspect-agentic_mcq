@@ -1,21 +1,60 @@
 \section{Methods}
 \label{sec:methods}
 
-\subsection{Data Collection}
-The data used to train and evaluate PaperQA2 was found on HuggingFace. 
-This contained information, such as the question proposed, true answer, distractor values, the orignal paper DOI, and metadata.
-Due to licensing issues, the actual papers themselves were not directly available, and so they had to be manually retrieved from their DOIs. 
-The evaluation papers were made up of both the training and test set.\\
+\subsection{Data Analysis}
+The first step was to collect and assemble the dataset for the LitQA benchmark. 
+The questions, answers, and distractors, as well as the paper DOIs' were provided on FutureHouse's HuggingFace repository. 
+Initially, two main issues were faced: only the training dataset was available, and that the papers themselves were not available. The test set was harder to access, but was eventually found. Then, with all of the DOIs, all of the individual paper PDFs were collected and assembled into the datasets. \\
 
-Once the papers were collated, some initial investigation of the papers themselves were conducted. 
-Figure CITE shows the years in which the papers were published. 
-The criteria for papers was that they were published after the GPT Training Cutoff in September 2021. 
-However, a number of the papers did not meet this criteria, and were subsequently removed from the evaluation papers. \\
+The nexrt step was to analyse the papers themselves. During the collection of the papers, it was noticed that some of the dates did not meet the requirements stated by the paper authours. This was an issue because some of the results could then be affected and so the invalid papers were then identified, and it was found that 15 of the papers were from before the cutoff. FIGURE shows the years of the paper. These papers were excluded from the training dataset and a 'valid' dataset of pdfs was created. \\
 
-HuggingFace data Retrieval
-Incorrect Papers in the original Paper
+The data from HuggingFace, which contained the question, correct answers and distractors, was turned into a \texttt{pandas} DataFrame. For every question, the correct answer and distractors were shuffled and then each assigned a letter to create a multiple choice question.
 
-\subsection{Evaluation Methodology}
-The field of LLMS, multi-agent AI, and RAG are new and ever-changing.
-This highlights a need for a unified system to benchmark the performance of these tools.
-The UK's AI Security Institute (AISI) released an open-source framework called $\texttt{inspect_ai}$ to easily evaluate the performance of LLMs CITE. 
+\subsection{Result Reproduction}
+After the dataset was fixed, the next step was to reproduce the result using PaperQA.
+The package has a very intuitive interface, the user uses the \texttt{ask} function (which is just a syncronous wrapper for the asynchonous function \texttt{agent\_query}), which then uses the prompt to find the relevant documents to answer the user's query. Each of the questions were fed to the \texttt{agent\_query} and the asnwer was recorded.
+
+The standard output of PaperQA is always a verbose summary of the answer, why the answer was chosen and citations from the paper that was used to answer the question. This is an extremely useful feature for scientists and researchers. 
+However, this makes it difficult for us. We are looking for a single letter answer, so that it can easily be matched up with the corresponding correct result or distractors from the DataFrame. The initial thought was to use prompt engineering to try and force PaperQA to return the single correct letter. 
+
+EXAMPLE PROMPT
+
+This method did manage to create an output with a single letter, but the agent would always return a short summary explaining the reaosning. 
+This led to very inconsistent results (where the position of the single letter answer within the text would vary), and made it difficult create a consistent evaluation pipline. \\
+
+The solution to this issue was to make use of structured outputs. Structured outputs allow users to customise the exact format of the output of an LLM. However, PaperQA uses \texttt{LiteLLM} to call LLMs for tasks such as Paper Retrieval, Evidence Gathering, and Answer Generation. Structured Outputs formats vary between different LLMs and can only be used if the LLMs are called directly. PaperQA calls LLMs through a third-party \texttt{LiteLLM}, and so there is no 'entry point' for Structured Outputs to be used.
+
+\subsection{Custom Multi-Agent Wrapper for PaperQA}
+The solution to the above problem came in the same format as PaperQA itself, to make use of multi-agent systems. Structured Outputs using json style formatting was possible using AG2. 
+Using AG2's Conversable Agent (the most basic agent), a rudimentary linear system was developed to format both the input and output of PaperQA to a standardised format. 
+This allowed a conisistent output from PaperQA. 
+FIGURE shows the strucutre of the agent. 
+The need for a consistent format of the input was related to the evaluation methodology. 
+
+\subsection{Evaluation and Insepct AI}
+
+Inspect AI is a framework to evaluate the performance of LLMs by the UK's AI Securoty Institute. Inspect AI's \texttt{eval} tool allows for rapid performance evaluation by running LLM calls asynchonously. \texttt{eval} function consists of three parts: a dataset, a solver, and a scorer. The dataset is made up of \texttt{Samples}, which correspond to an individual task, or multiple choice question in this case. Each \texttt{Sample} contains fields such as inputs (which corresponds to our question), choices, and targets. The solver corresponds to the LLM system used to answer the question, and the scorer is the evaluation metric. \\
+
+\texttt{inspect\_evals} CITE is a custom library for evaluating various LLM's performances on benchamrks such as LitQA. However, it is only compatible with single LLMs, not multi-agent systems. \\
+
+\texttt{inspect\_ai} does offer support for multi-agent systems through the \texttt{bridge} function, but the package is new, and in its native form cannot support end-to-end MCQ evaluation with multi-agent systems. The \texttt{bridge} function effectly allows multi-agents to replace the solver, as long as its output follows a specific format.
+This format does not allow for information such as questions, choice, or target to be passed alonf in its native form, only allowing agent messages to be passed along. 
+This prevents any information to the scorer the evaluation fails. \\
+
+To this end, a custom package was built for multi-agent MCQ evaluation using \texttt{inspect\_ai}. The package is built to intergrate easily with Inspect AI, and allows any multi agent system to be used, as long as it takes in a question and outputs a text reply. 
+It levarages a custom Dataset builder, creating custom Samples by reading the the \texttt{pandas} DataFrames into the specified Structured Output JSON form. The custom Samples would be sent to a custom bridge agent containing the multi-agent MCQ function, which produced an answer that needed to be evaluted by a Scorer. Answers would be classified as CORRECT, INCORRECT, or NA. NA represents when the machine fails, or when there is insufficient information to answer the question. The answer will also be labelled as correct if NA is chosen and NA is the correct option. This was implemented as a custom \texttt{inspect\_ai} scorer. The custom scorer function that can read the Structured Output JSON from AG2. From this, it converts the data into \texttt{inspect\_ai.Score} object, which can be used by \texttt{eval} to calculate the performance of the LLM agent's performance across the whole task. \\
+
+\subsection{Hyperparameters}
+
+The main hyperparameter that is varied in this project is the LLM itself. In the paper, GPT-4-Turbo wsa the default LLM used for the tasks. However, with the pace of the new models coming out, and their improvements to performance, multiple models were tested for this evaluation to see the improvements in performance. Models tested were OpenAI's \texttt{gpt-4o-mini, gpt-4.1, gpt-4-turbo}. Due to budget restrictions, the defualt model used in the experiments was \texttt{gpt-4o-mini}, which offers equivalent or better performance as \texttt{gpt-4-turbo} CITE for a lower per-token cost. \\
+
+Another hyperparameter that was changed was the text embedding model used to encode the text. The default model used was OpenAI's \texttt{text-embedding-3}, which at the time of writing was no longer the cutting-edge model. Instead, the best performing model available on LiteLLM (all models must be available on LiteLLM, as this is the LLM backend of PaperQA) was Google Gemini's \texttt{text-embedding-004}. Embeddings are crucial to all NLP related tasks, as the better the representation of the semantic meaning of text, the better chance the LLM can truly 'understand' the text, and make the best decision. \\
+
+Within PaperQA there are also two key parameters that the authors varied to find out the effect of the performance. First was the Answer Cutoff (\texttt{max\_sources})hyperparameter, which limits the maximum number of sources used by PaperQA to generate its response. This happens after the RCS step, so it is looking at the top-ranked answers. The other hyperparameter is the Consider Sources or \texttt{evidence\_k}, which happens during the initial document retrieval step. The best way to describe the difference between them is using an analogy: a researcher will take the 30 most promising articles from a library (this is the \texttt{evidence\_k}) to complete this research. From these 30 articles, the researcher then skim reads them and picks the best 5 (this is the \texttt{max\_sources}) to read thouroughly and use to inform their research. Within the paper, the default values for \texttt{max\_sources} and \texttt{evidence\_k} were 5 and 30, respectively. If the \texttt{evidence\_k} is lower than the \texttt{max\_sources}, then the \texttt{max\_sources} would be automatically lowered to match. 
+In the paper, the \texttt{max\_sources} was set to 15, but its performance was worse, and the result displayed in the paper was using the an \texttt{max\_sources} of 5, hence 5 was used as the defualt in the experiement.\\
+
+TODO turn off RCS. 
+
+Other hyperparameters, such as temperature, were kept the same throughout the experiments. \\
+
+

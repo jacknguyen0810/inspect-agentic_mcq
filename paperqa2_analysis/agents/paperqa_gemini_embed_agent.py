@@ -3,9 +3,9 @@ from paperqa.settings import AgentSettings, AnswerSettings
 import os
 
 # Get API key from environment
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY environment variable is not set. Please set it with your Gemini API key.")
+# GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+# if not GOOGLE_API_KEY:
+#     raise ValueError("GOOGLE_API_KEY environment variable is not set. Please set it with your Gemini API key.")
 
 async def paperqa_gemini_agent(prompt: str, settings: Settings | None = None) -> dict:
     """PaperQA (with Gemini Embeddings) agent wrapper.

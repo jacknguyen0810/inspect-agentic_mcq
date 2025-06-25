@@ -28,6 +28,7 @@ def bridge_agent(custom_agent: Callable, template: str | None = None, **kwargs):
         template = MULTIPLE_CHOICE_TEMPLATE_BRIDGE
 
     async def run(sample: dict[str]) -> dict:
+        print(sample)
         # Use structured agent to format the input
         input_result = structured_agent(sample["messages"][0]["content"], StructuredInput)
         message = json.loads(input_result["output"])
@@ -41,12 +42,18 @@ def bridge_agent(custom_agent: Callable, template: str | None = None, **kwargs):
         agent_result = await custom_agent(query, **kwargs)
         
         # Add the target to the string response so that it can be parsed by the structured agent
-        output_str = agent_result["answer"] + f"\nTarget: {target}"
+        # output_str = agent_result["answer"] + f"\nTarget: {target}"
+        output_str = agent_result["answer"]
         formatted_result = structured_agent(output_str, StructuredOutput)
+        
+        # Pass the target after, avoid interaction with Structured Input
+        output_dict = json.loads(formatted_result["output"])
+        output_dict["Target"] = target
+        output_json = json.dumps(output_dict)
 
         # Create the output dictionary with all metrics
         output = {
-            "output": formatted_result["output"],
+            "output": output_json,
             "cost": agent_result.get("cost", 0.0),
             "token_counts": agent_result.get("token_counts", {}),
             "metrics": {
@@ -115,18 +122,18 @@ if __name__ == "__main__":
 
         # Verify the output format
         if not isinstance(result, dict):
-            print("❌ Error: Result is not a dictionary")
+            print("Error: Result is not a dictionary")
             return False
 
         if "output" not in result:
-            print("❌ Error: Result does not contain 'output' key")
+            print("Error: Result does not contain 'output' key")
             return False
 
         if not isinstance(result["output"], str):
-            print("❌ Error: Output is not a string")
+            print("Error: Output is not a string")
             return False
 
-        print("✅ All tests passed!")
+        print("All tests passed!")
         return True
 
     # Run the test
