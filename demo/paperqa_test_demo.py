@@ -43,10 +43,10 @@ if __name__ == "__main__":
         evidence_k=30,
         evidence_detailed_citations=False,
         evidence_retrieval=False,
-        evidence_summary_length="around 50 words",
-        evidence_skip_summary=False,
+        evidence_summary_length="around 30 words",
+        evidence_skip_summary=True,
         answer_max_sources=5,
-        max_answer_attempts=3,
+        max_answer_attempts=1,
         answer_length="1 letter"
     )
 
