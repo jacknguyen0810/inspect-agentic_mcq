@@ -28,7 +28,7 @@ def precision_value_to_float(
         # Catch non-string values
         if isinstance(value, int | float | bool):
             return float(value)
-        # Returh -1 score for unable to answer.
+        # Return -1 score for unable to answer.
         elif value == noanswer:
             return -1
         else:
@@ -37,6 +37,24 @@ def precision_value_to_float(
             )(value)
 
     return to_float
+
+
+def accuracy_value_to_float(
+    correct: Value = CORRECT,
+    incorrect: Value = INCORRECT,
+    noanswer: Value = NOANSWER,
+) -> ValueToFloat:
+    def to_float(value: Value) -> float:
+        # Catch non-string values
+        if isinstance(value, int | float | bool):
+            return float(value)
+        else:
+            return value_to_float(
+                correct=correct, incorrect=incorrect, noanswer=noanswer
+            )(value)
+    
+    return to_float
+        
 
 
 # Custom Metrics
@@ -58,8 +76,9 @@ def paperqa_precision(to_float: ValueToFloat = precision_value_to_float()) -> Me
     return metric
 
 
+# Is this wrong?
 @metric
-def paperqa_accuracy(to_float: ValueToFloat = precision_value_to_float()) -> Metric:
+def paperqa_accuracy(to_float: ValueToFloat = accuracy_value_to_float()) -> Metric:
 
     def metric(scores: list[SampleScore]) -> float:
         total = 0.0
