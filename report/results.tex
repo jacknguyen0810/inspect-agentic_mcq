@@ -1,7 +1,7 @@
 \section{Results}
 \label{sec:results}
 
-Figure \ref{fig:main_result} shows the results from the experiments. Figure \ref{fig:original_result} shows the results from the original paper. This section examines the results from this project and compares them to the original. All of the experiments were run three times to evaluate the variation in performance of the ablations. 
+Figure \ref{fig:main_result} displays the results from the experiments conducted in this project, while Figure \ref{fig:original_result} shows the results from the original paper for comparison. This section examines and contrasts these two sets of results. All experiments were run three times to assess the performance variation of the different ablations. 
 
 \begin{figure}[H]
     \centering
@@ -13,41 +13,38 @@ Figure \ref{fig:main_result} shows the results from the experiments. Figure \ref
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/original_result.png}
-    \caption{Original Paper Results. B: Precision and Accuracy of PaperQA and LLMs on LitQA. C: Accuracy of verious abalations of PaperQA. D: Aggragated DOI Recall at each stage (This result is not relevant to this report.)}
+    \caption{Original Paper Results. B: Precision and Accuracy of PaperQA and LLMs on LitQA. C: Accuracy of various ablations of PaperQA. D: Aggregated DOI Recall at each stage (This result is not relevant to this report.)}
     \label{fig:original_result}
 \end{figure}
 
 \subsection{RAG vs. Standalone LLM}
 
-Similarly to the paper, the results from this project showed that PaperQA outperforms standalone LLMs in question answering. However, there is a difference in how the LLM attempted to answer the questions. In all of the standalone LLM evalutions, the LLM attempted to answer every single question, and hence the accuraccy and precision was the same for every result, and hence results in a large number of hallucinations, rather than saying that it cannot answer the question. The standalone LLM used in this experiment was \texttt{gpt-4o-mini}, but the standalone LLM used in the original paper was \texttt{gpt-4-turbo}. The performance of 4o-mini is slightly worse in terms of accuracy, but better in terms of precision. 
+Consistent with the original study, the results from this project demonstrated that PaperQA outperforms standalone LLMs in question answering. A key difference in behavior was observed: in all standalone evaluations, the LLM attempted to answer every question. Consequently, its accuracy and precision scores were identical, leading to a high rate of hallucination as the model would guess rather than concede an inability to answer. The standalone LLM used in this experiment was \texttt{gpt-4o-mini}, whereas the original paper utilized \texttt{gpt-4-turbo}. The performance of \texttt{gpt-4o-mini} was slightly worse in terms of overall accuracy. 
 
 \subsection{PaperQA Ablations}
-The following experiemnts tested the effect of changing key hyperparameters of PaperQA, from the LLM used for the agent and the RAG model to the top-k retrieval and answer cutoff. 
+The following experiments tested the effect of changing key hyperparameters of PaperQA, from the LLMs used for the agent and RAG components to the top-k retrieval and answer cutoff settings. 
 
-The recreated baseline paperQA uses \texttt{gpt-4o-mini} as the agent LLM, \texttt{gpt-4o-mini} as the RAG model, and a top-k of 30, answer cutoff of 5. The text embedding was the PaperQA default embedding, which is \texttt{text-embedding-3-small}. The original baseline used \texttt{gpt-4-turbo} as the agent LLM, \texttt{gpt-4-turbo} as the RAG model, and a top-k of 30, answer cutoff of 15. 
-The reason that the baseline of answer cutoff of 5 was used, was because it was the reuslt that achieved 'superhuman' performance. The recreated baseline seemed to exceed the original baseline, achieving superhuman performance in both accuracy and precision. 
+The recreated baseline for PaperQA utilized \texttt{gpt-4o-mini} as the agent and RAG model, with a top-k of 30 and an answer cutoff of 5. The text embedding model was the PaperQA default, \texttt{text-embedding-3-small}. In contrast, the original baseline used \texttt{gpt-4-turbo} for the agent and RAG model, with a top-k of 30 and an answer cutoff of 15. An answer cutoff of 5 was chosen for our baseline, as this was the configuration that achieved 'superhuman' performance in the original study. The recreated baseline appeared to exceed the original, achieving superhuman performance in both accuracy and precision. 
 
-To more similarly recreate the original result, an experiment was run with the PaperQA instead using the \texttt{gpt-4-turbo} agent LLM, and \texttt{gpt-4-turbo} as the RAG model. The expected performance was to be similar to the original result, but in this experiment, superhuman performance was achieved for both the accuracy and precision. Assuming this was an errorneous result, an inspection into the results yielded no such evidence, with the individual results being assigned the correct score for the outputted answer. \\
+To more closely replicate the original result, an experiment was run using \texttt{gpt-4-turbo} for both the agent and RAG model. The performance was expected to be similar to the original result; however, our experiment achieved superhuman performance in both accuracy and precision. An inspection of the results yielded no evidence of scoring errors that would explain this anomaly. \\
 
-Strangely, the results showed that using PaperQA with the \texttt{gpt-4.1} as both the agent and the RAG model, the accuracy dropping to sub-human performance compared to the original result and the GPT-4-Turbo result, with the precision being similar, albeit slightly lower. This was an unexpected result as GPT-4.1 is a much newer model that should outperform GPT-4-Turbo in every metric. 
+Unexpectedly, using PaperQA with \texttt{gpt-4.1} for both the agent and RAG model resulted in the accuracy dropping to sub-human levels compared to both the original result and our GPT-4-Turbo experiment, with the precision being similar but slightly lower. This was a surprising outcome, as GPT-4.1 is a newer model expected to outperform GPT-4-Turbo across standard benchmarks. 
 
-For all of the variations in models being used, the model that performed in terms of accuracy was actually the GPT-4o-Mini model that used the best-in-class text embedding model, Gemini's \texttt{text-embedding-004}. It outperofmred the original baseline, and consistently achieved superhuman performance in both accuracy and precision. \\
+Across all model variations, the best-performing model in terms of accuracy was the GPT-4o-Mini configuration that used Google's state-of-the-art text embedding model, \texttt{text-embedding-004}. It outperformed the original baseline and consistently achieved superhuman performance in both accuracy and precision. \\
 
-Increasing the Answer Cutoff had the same effect as the original paper, decreasing the accuracy, but the effect of removing the RCS step was much less pronounced than the orginal paper, with the original paper showing the accuracy was reduced by 12.8\% compared to the recreated baseline, which was reduced by 6.1\%.\\
+Increasing the answer cutoff had the same effect as in the original paper, decreasing accuracy. However, the effect of removing the RCS step was much less pronounced than in the original study; whereas the original paper reported an accuracy reduction of 12.8\%, our experiment showed a reduction of only 6.1\%.\\
 
-The effect of changing the top-k retrieval had a much smaller effect on the accuracy comapred to the original paper. The general trend in the paper was that decreasing the top-k would decrease the accuracy, but the experiments showed there seemed to be no correlation. In fact, lowering the top-k to below 10 still yielded near superhuman performance in accuracy, which the original paper with a top-k of 30 could only just about achieve. 
+The effect of changing the top-k retrieval setting had a much smaller impact on accuracy compared to the original paper. While the general trend in the original study was that decreasing the top-k value decreased accuracy, our experiments showed no clear correlation. In fact, lowering the top-k to below 10 still yielded near-superhuman accuracy, a level the original paper's configuration (with top-k=30) only narrowly achieved. 
 
-The interesting result is that all of the experiements involving RAG completely humans out of the water in terms of accuracy, with all of the ablations achieving at least 77.3\% accuracy, and the best performing abalation achieving 89.5\% accuracy, besting the human benchmark of 73.8\%. 
+The RCS step was considered crucial for superhuman performance in the original paper, where its removal led to a decrease of around 10\% in accuracy. 
+In our recreated experiment, removing the RCS step led to only a 6\% decrease in accuracy, with performance remaining very close to the human benchmark. \\
 
-The accuracies of the ablations were much more varied than the precisions, but they did not vary as much as the original paper. All of the RAG models and experiments either were close to or beat human performance, even when given hyperparameters that should have theoretically have hindered performance. 
+A key finding is that all experiments involving RAG significantly surpassed the human benchmark for precision, with all ablations achieving at least 77.3\% precision, and the best-performing ablation achieving 89.5\%, exceeding the human benchmark of 73.8\%. \\
 
+The accuracies of the ablations were more varied than the precisions, but this variation was less pronounced than in the original paper. All RAG configurations performed close to or better than the human benchmark, even with hyperparameter settings that were theoretically expected to hinder performance. \\
 
-
-
-
-
-
-RCS decreases accuracy and precision but has less of an effect than reducing top k for accuracy. 
+\textit{It should be noted that an error was discovered in the original accuracy calculation script. Consequently, all accuracy metrics reported herein have been recalculated from the raw outputs to ensure correctness, obviating the need to re-run the experiments.
+}
 
 
 

@@ -1,33 +1,39 @@
 \documentclass[12pt,a4paper]{article}
 
-% Essential packages
+% --- PACKAGES ---
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage[numbers, sort&compress]{natbib} % For improved citations
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{siunitx}
 \usepackage{cleveref}
+\usepackage{times} % Use Times New Roman font
+\usepackage{authblk} % For author affiliations
+\usepackage{abstract} % For abstract formatting
+\usepackage{flushend} % To balance columns on the last page
+\usepackage{parskip} % To remove paragraph indentation
 
-% Page layout
-\usepackage[margin=2.5cm]{geometry}
-\usepackage{setspace}
-\onehalfspacing
+% --- LAYOUT ---
+\usepackage[margin=2cm, columnsep=0.8cm]{geometry}
+\setlength{\columnsep}{0.8cm}
 
-% Title information
-\title{Scientific Report Title}
-\author{Author Name}
+% --- DOCUMENT METADATA ---
+\title{\textbf{On the Reproducibility of Superhuman Performance in Agentic RAG Systems for Scientific Question Answering}}
+\author[1]{Phong-Anh Nguyen Trinh}
+\affil[1]{Department of Physics, University of Cambridge}
 \date{\today}
+
 
 \begin{document}
 
 \maketitle
 
-\input{abstract}
 \input{introduction}
 \input{methods}
 \input{results}
@@ -37,7 +43,8 @@
 \section*{Acknowledgments}
 Acknowledge any funding, technical support, or other contributions.
 
-\bibliographystyle{plain}
+% --- BIBLIOGRAPHY ---
+\bibliographystyle{plainnat}
 \bibliography{references}
 
 \end{document} 
