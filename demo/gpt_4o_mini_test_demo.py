@@ -6,7 +6,7 @@ from inspect_ai.solver import multiple_choice
 
 from inspect_evals.lab_bench.scorer import precision_choice
 
-from paperqa2_analysis.inspect_ai_custom.sample import df_2_sample
+from inspect_agentic_mcq.inspect_ai_custom.sample import df_2_sample
 
 if __name__ == "__main__":
     # Get the dataset
