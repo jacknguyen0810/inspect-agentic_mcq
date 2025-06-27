@@ -8,10 +8,10 @@ from pandas import DataFrame
 from inspect_ai import Epochs, Task, task, eval
 from inspect_ai.agent import bridge
 
-from paperqa2_analysis.agents.bridge_agent import bridge_agent
-from paperqa2_analysis.inspect_ai_custom.sample import df_2_sample_bridge
+from inspect_agentic_mcq.agents.bridge_agent import bridge_agent
+from inspect_agentic_mcq.inspect_ai_custom.sample import df_2_sample_bridge
 
-from paperqa2_analysis.inspect_ai_custom.paperqa_scorer import paperqa_scorer
+from inspect_agentic_mcq.inspect_ai_custom.paperqa_scorer import paperqa_scorer
 
 
 class MultipleChoiceEval:
