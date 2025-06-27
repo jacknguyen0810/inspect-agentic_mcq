@@ -2,15 +2,15 @@
 \label{sec:introduction}
 
 Large Language Models (LLMs) have the potential to help scientists with retrieving, synthesizing, and summarizing the scientific literature \cite{skarlinski_language_2024}. 
-However, issues such as hallucinations \cite{xu_hallucination_2025}, and underdeveloped retrieval and reasoning benchmarks, hamper the direct use of LLMs in scientific research . \\
+However, issues such as hallucinations \cite{shi_large_nodate} \cite{xu_hallucination_2025}, and underdeveloped retrieval and reasoning benchmarks, hamper the direct use of LLMs in scientific research . \\
 
-The field is rapidly developing, with new models such as Google's Gemini 2.5 \cite{noauthor_gemini_2025} and OpenAI's o3 \cite{knight_openai_nodate} being able to 'reason', and excel at coding, maths, and langaage benchmarks. 
-This also highlights the developments of new cutting-edge benchmarks for scientific performance in areas such as scientific discovery \cite{shojaee_llm-srbench_2025}, analysis \cite{cai_sciassess_2024}, programming \cite{quan_codeelo_2025} \cite{openai_competitive_2025}, and mathematics \cite{liu_mathbench_2024}. \\
+The field is rapidly developing, with new models such as Google's Gemini 2.5 and OpenAI's o3 being able to 'reason', and excel at coding, maths, and langaage benchmarks. 
+This also highlights the developments of new cutting-edge benchmarks for scientific performance in areas such as scientific discovery \cite{shojaee_llm-srbench_2025}, analysis \cite{cai_sciassess_2024}, programming \cite{openai_competitive_2025}, \cite{quan_codeelo_2025}, and mathematics \cite{liu_mathbench_2024}. \\
 
 Alongside the development of the fundamental models themselves, techniques such as Retreival Augemented Generation (RAG) and the use of Multi-Agent Systems (MAS) allowed better use of LLMs in scientific research. \\
 
 \subsection{Retrieval Augmented Generation}
-Retrieval Augmented Generation (RAG) is a sophisticated technique designed to enhance the capabilities of Large Language Models (LLMs) by grounding their responses in external knowledge sources. This process mitigates common LLM issues like hallucinations and outdated information by dynamically providing relevant, fact-based context. The RAG process can be broken down into several key stages \cite{gupta_comprehensive_2024}:
+Retrieval Augmented Generation (RAG) is a sophisticated technique designed to enhance the capabilities of Large Language Models (LLMs) by grounding their responses in external knowledge sources. This process mitigates common LLM issues like hallucinations and outdated information by dynamically providing relevant, fact-based context. The RAG process can be broken down into several key stages \cite{gupta_comprehensive_2024} \cite{lewis_retrieval-augmented_2021}:
 
 \begin{enumerate}
     \item \textbf{Indexing}: A corpus of documents (e.g., scientific papers, reports, web pages) is processed into a searchable format. This involves loading the documents, splitting them into smaller, manageable chunks of text, and converting these chunks into numerical representations called vector embeddings using an embedding model. These embeddings are then stored in a specialized vector database, which allows for efficient similarity searching.
