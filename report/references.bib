@@ -151,12 +151,22 @@
 	file = {PDF:C\:\\Users\\jackn\\Zotero\\storage\\HUJZQIUQ\\Ghareeb et al. - 2025 - Robin A multi-agent system for automating scientific discovery.pdf:application/pdf},
 }
 
-@article{shi_large_nodate,
-	title = {Large {Language} {Models} {Can} {Be} {Easily} {Distracted} by {Irrelevant} {Context}},
-	language = {en},
-	author = {Shi, Freda and Chen, Xinyun and Misra, Kanishka and Scales, Nathan and Dohan, David and Chi, Ed and Scharli, Nathanael and Zhou, Denny},
-	file = {PDF:C\:\\Users\\jackn\\Zotero\\storage\\MXHZKL6P\\Shi et al. - Large Language Models Can Be Easily Distracted by Irrelevant Context.pdf:application/pdf},
+@InProceedings{pmlr-v202-shi23a,
+	title = 	 {Large Language Models Can Be Easily Distracted by Irrelevant Context},
+	author =       {Shi, Freda and Chen, Xinyun and Misra, Kanishka and Scales, Nathan and Dohan, David and Chi, Ed H. and Sch\"{a}rli, Nathanael and Zhou, Denny},
+	booktitle = 	 {Proceedings of the 40th International Conference on Machine Learning},
+	pages = 	 {31210--31227},
+	year = 	 {2023},
+	editor = 	 {Krause, Andreas and Brunskill, Emma and Cho, Kyunghyun and Engelhardt, Barbara and Sabato, Sivan and Scarlett, Jonathan},
+	volume = 	 {202},
+	series = 	 {Proceedings of Machine Learning Research},
+	month = 	 {23--29 Jul},
+	publisher =    {PMLR},
+	pdf = 	 {https://proceedings.mlr.press/v202/shi23a/shi23a.pdf},
+	url = 	 {https://proceedings.mlr.press/v202/shi23a.html},
+	abstract = 	 {Large language models have achieved impressive performance on various natural language processing tasks. However, so far they have been evaluated primarily on benchmarks where all information in the input context is relevant for solving the task. In this work, we investigate the <em>distractibility</em> of large language models, i.e., how the model prediction can be distracted by irrelevant context. In particular, we introduce Grade-School Math with Irrelevant Context (GSM-IC), an arithmetic reasoning dataset with irrelevant information in the problem description. We use this benchmark to measure the distractibility of different prompting techniques for large language models, and find that the model is easily distracted by irrelevant information. We also identify several approaches for mitigating this deficiency, such as decoding with self-consistency and adding to the prompt an instruction that tells the language model to ignore the irrelevant information.}
 }
+
 
 @misc{wu_autogen_2023,
 	title = {{AutoGen}: {Enabling} {Next}-{Gen} {LLM} {Applications} via {Multi}-{Agent} {Conversation}},
@@ -226,7 +236,7 @@
 
 @misc{soumith_chintala_soumithchintala_i_2023,
 	type = {Tweet},
-	title = {i might have heard the same 😃 -- {I} guess info like this is passed around but no one wants to say it out loud. {GPT}-4: 8 x {220B} experts trained with different data/task distributions and 16-iter inference. {Glad} that {Geohot} said it out loud. {Though}, at this point, {GPT}-4 is},
+	title = {i might have heard the same :-) -- {I} guess info like this is passed around but no one wants to say it out loud. {GPT}-4: 8 x {220B} experts trained with different data/task distributions and 16-iter inference. {Glad} that {Geohot} said it out loud. {Though}, at this point, {GPT}-4 is},
 	url = {https://x.com/soumithchintala/status/1671267150101721090},
 	language = {en},
 	urldate = {2025-06-26},
@@ -333,4 +343,20 @@
 	note = {arXiv:2402.03578 [cs]},
 	keywords = {Computer Science - Artificial Intelligence, Computer Science - Multiagent Systems},
 	file = {PDF:C\:\\Users\\jackn\\Zotero\\storage\\JPC6LXDA\\Han et al. - 2025 - LLM Multi-Agent Systems Challenges and Open Problems.pdf:application/pdf},
+}
+
+@misc{liu_lost_2023,
+	title = {Lost in the Middle: How Language Models Use Long Contexts},
+	url = {http://arxiv.org/abs/2307.03172},
+	doi = {10.48550/arXiv.2307.03172},
+	abstract = {While recent language models have the ability to take long contexts as input, relatively little is known about how well they use longer context. We analyze the performance of language models on two tasks that require identifying relevant information in the middle of long contexts: multi-document question answering and key-value retrieval. We find that performance can degrade significantly when relevant information occurs at the beginning or end of long input contexts, and that this degradation is not due to position bias, as the relevant information is still present in the input. We show that the use of long contexts improves performance even when the relevant information is at the beginning of the context, suggesting that the models do use the additional context. However, we find that there is still room for improvement in how effectively language models use long contexts.},
+	language = {en},
+	urldate = {2025-06-26},
+	publisher = {arXiv},
+	author = {Liu, Nelson F. and Zhang, Tianyi and Hewitt, John and Bevilacqua, Michele and Petroni, Fabio and Liang, Percy},
+	month = jul,
+	year = {2023},
+	note = {arXiv:2307.03172 [cs]},
+	keywords = {Computer Science - Computation and Language},
+	file = {PDF:C\:\\Users\\jackn\\Zotero\\storage\\EXAMPLE\\Liu et al. - 2023 - Lost in the Middle How Language Models Use Long Contexts.pdf:application/pdf},
 }
