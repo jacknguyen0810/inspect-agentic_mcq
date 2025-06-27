@@ -69,7 +69,15 @@ The \texttt{inspect\_ai} framework does offer support for multi-agent systems vi
 This limitation prevents the scorer from accessing the necessary information to determine if an answer is correct. \\
 
 To overcome this, a custom package for multi-agent MCQ evaluation was developed using \texttt{inspect\_ai}. This package integrates with Inspect AI and allows any multi-agent system to be evaluated, provided it accepts a question and returns a text reply. 
-It leverages a custom dataset builder that reads the \texttt{pandas} DataFrame and creates custom \texttt{Sample} objects with a structured JSON format. These samples are passed to a custom bridge agent that encapsulates the multi-agent system. The resulting answer is then evaluated by a custom scorer. Answers are classified as CORRECT, INCORRECT, or NA (for cases where the agent fails or cannot find an answer). This implementation was based on the logic in the \texttt{inspect\_evals} package. The custom scorer parses the structured output from the agent system and converts the data into an \texttt{inspect\_ai.Score} object, allowing the \texttt{eval} tool to calculate and aggregate performance metrics across the entire task. Below is an example prompt would be given into the \texttt{bridge} agent, which would partition the information and ensure the correcrt information is passed to the appropriate part of Inspect AI\\
+It leverages a custom dataset builder that reads the \texttt{pandas} DataFrame and creates custom \texttt{Sample} objects with a structured JSON format. These samples are passed to a custom bridge agent that encapsulates the multi-agent system. The resulting answer is then evaluated by a custom scorer. Answers are classified as CORRECT, INCORRECT, or NA (for cases where the agent fails or cannot find an answer). This implementation was based on the logic in the \texttt{inspect\_evals} package. The custom scorer parses the structured output from the agent system and converts the data into an \texttt{inspect\_ai.Score} object, allowing the \texttt{eval} tool to calculate and aggregate performance metrics across the entire task. Below is an example prompt would be given into the \texttt{bridge} agent, which would partition the information and ensure the correct information is passed to the appropriate part of Inspect AI\\
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/bridge_agent.png}
+    \caption{Custom Bridge Agent Structure}
+    \label{fig:bridge_agent}
+\end{figure}
+
 
 \begin{verbatim}
 Question: Approximately what percentage of topologically associated 

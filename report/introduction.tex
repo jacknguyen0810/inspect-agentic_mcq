@@ -2,15 +2,15 @@
 \label{sec:introduction}
 
 Large Language Models (LLMs) have the potential to help scientists with retrieving, synthesizing, and summarizing the scientific literature \cite{skarlinski_language_2024}. 
-However, issues such as hallucinations \cite{shi_large_nodate} \cite{xu_hallucination_2025}, and underdeveloped retrieval and reasoning benchmarks, hamper the direct use of LLMs in scientific research . \\
+However, issues such as hallucinations \cite{pmlr-v202-shi23a} \cite{xu_hallucination_2025}, and underdeveloped retrieval and reasoning benchmarks, hamper the direct use of LLMs in scientific research . \\
 
-The field is rapidly developing, with new models such as Google's Gemini 2.5 and OpenAI's o3 being able to 'reason', and excel at coding, maths, and langaage benchmarks. 
+The field is rapidly developing, with new models such as Google's Gemini 2.5 and OpenAI's o3 being able to 'reason', and excel at coding, maths, and language benchmarks. 
 This also highlights the developments of new cutting-edge benchmarks for scientific performance in areas such as scientific discovery \cite{shojaee_llm-srbench_2025}, analysis \cite{cai_sciassess_2024}, programming \cite{openai_competitive_2025}, \cite{quan_codeelo_2025}, and mathematics \cite{liu_mathbench_2024}. \\
 
-Alongside the development of the fundamental models themselves, techniques such as Retreival Augemented Generation (RAG) and the use of Multi-Agent Systems (MAS) allowed better use of LLMs in scientific research. \\
+Alongside the development of the fundamental models themselves, techniques such as Retrieval Augmented Generation (RAG) and the use of Multi-Agent Systems (MAS) allowed better use of LLMs in scientific research. \\
 
 \subsection{Retrieval Augmented Generation}
-Retrieval Augmented Generation (RAG) is a sophisticated technique designed to enhance the capabilities of Large Language Models (LLMs) by grounding their responses in external knowledge sources. This process mitigates common LLM issues like hallucinations and outdated information by dynamically providing relevant, fact-based context. The RAG process can be broken down into several key stages \cite{gupta_comprehensive_2024} \cite{lewis_retrieval-augmented_2021}:
+Retrieval Augmented Generation (RAG) is a sophisticated technique designed to enhance the capabilities of Large Language Models (LLMs) by grounding their responses in external knowledge sources. This process mitigates common LLM issues like hallucinations and outdated information by dynamically providing relevant, fact-based context. The RAG process can be broken down into several key stages \cite{gupta_comprehensive_2024} \cite{lewis_retrieval-augmented_2021}.
 
 \begin{enumerate}
     \item \textbf{Indexing}: A corpus of documents (e.g., scientific papers, reports, web pages) is processed into a searchable format. This involves loading the documents, splitting them into smaller, manageable chunks of text, and converting these chunks into numerical representations called vector embeddings using an embedding model. These embeddings are then stored in a specialized vector database, which allows for efficient similarity searching.
@@ -20,10 +20,11 @@ Retrieval Augmented Generation (RAG) is a sophisticated technique designed to en
 
 This architecture is powerful because it separates the knowledge base from the generative model, allowing the knowledge to be updated without needing to retrain the LLM.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    \label{fig:rag_diagram}
-    INCLUDE A PLOT AND EXPLAIN HOW RAG WORKS
+    \includegraphics[width=\textwidth]{figures/basic_rag.png}
+    \caption{A basic RAG pipeline. The user query is converted into a vector embedding, which is then used to search the vector database for the most relevant document chunks. These chunks are then combined with the original user prompt and fed as context to an LLM. The model uses this augmented prompt to generate a response that is synthesized directly from the provided information.}
+    \label{fig:basic_rag}
 \end{figure}
 
 \subsection{Multi-Agent Systems}
@@ -65,7 +66,7 @@ In the final stage, a \texttt{GenerateAnswer} tool compiles the highest-scoring 
 As an optional step, the agent can employ a \textbf{Citation Traversal} tool to expand the scope of its search beyond the initial document corpus. After identifying a highly relevant paper, this tool can be used to analyze its bibliography or query external databases (like Semantic Scholar) to find papers it cites (backward traversal) or papers that cite it (forward traversal). This is a technique for discovering foundational research or, conversely, the latest developments building upon a known paper. These newly discovered documents can then be ingested and indexed as it runs, allowing the agent to dynamically expand its knowledge base to answer a query more comprehensively. \\
 
 \subsubsection{Key Result}
-The paper claims that PaperQA's performance beats the human benchmark, specifically for the precision of questions answered, achieving a precision of $85.2\%$ compared to the human precision of $73.8\&$. The benchmark metrics are accuracy and precision. \\
+The paper claims that PaperQA's performance beats the human benchmark, specifically for the precision of questions answered, achieving a precision of 85.2\% compared to the human precision of 73.8\%. The benchmark metrics are accuracy and precision. \\
 
 \begin{equation}
     Accuracy = \frac{Correct Questions}{All Questions}
@@ -81,7 +82,7 @@ The questions would also require some 'reasoning' and the answer could not be a 
 The questions were taken from recently published biology papers, post September 2021 (the GPT training cutoff). The assumed reason for this is to prevent the LLM agents from using their 'own knowledge', instead of reading and understanding the papers given to it. \\
 
 Human evaluators were then tasked with answering the same questions. 
-However, the human evaluators were not directly given the correct paper (or the correct paper within a group of papers - which is essentially how PaperQA performs evaluation). 
+However, the human evaluators were not directly given the correct paper (or the correct paper within a group of papers, which is essentially how PaperQA performs evaluation). 
 Instead, the evaluators were access to the internet and journal collections, but were told to not use generative AI tools such as ChatGPT.\\
 
 The aim of this project is to recreate this result, and confirm whether language agents can outperform human performance in question answering. \\
