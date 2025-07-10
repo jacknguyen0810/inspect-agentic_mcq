@@ -3,13 +3,13 @@ requires = ["setuptools>=61.0", "wheel", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "paperqa2_analysis"
+name = "inspect_agentic_mcq"
 dynamic = ["version"]
 authors = [
     {name = "Phong-Anh Nguyen Trinh", email = "pan31@cam.ac.uk"}
 ]
 
-description = "Analysis of PaperQA2: Reproducing results from the paper 'Large Langauge Agents Achieve Superhuman Synthesis of Scientific Knowledge'"
+description = "A package for evaluating agentic RAG systems for multiple choice questions using Inspect AI"
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [
@@ -26,7 +26,7 @@ dependencies = [
 ]
 
 [tool.setuptools]
-packages = ["paperqa2_analysis"] 
+packages = ["inspect_agentic_mcq"] 
 
 [tool.setuptools_scm]
-write_to = "paperqa2_analysis/version.py"
+write_to = "inspect_agentic_mcq/version.py"

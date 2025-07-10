@@ -3,8 +3,8 @@ import pandas as pd
 from paperqa import Settings
 from paperqa.settings import AgentSettings, AnswerSettings
 
-from paperqa2_analysis.evaluate import MultipleChoiceEval
-from paperqa2_analysis.agents.paperqa_agent import paperqa_agent
+from inspect_agentic_mcq.evaluate import MultipleChoiceEval
+from inspect_agentic_mcq.agents.paperqa_agent import paperqa_agent
 
 if __name__ == "__main__":
     # Import data
@@ -14,7 +14,7 @@ if __name__ == "__main__":
     llm_config_dict = {
         "model_list": [
             {
-                "model_name": "gpt-4o-mini",
+                "model_name": "gpt-4-turbo",
                 "litellm_params": {
                     "model": "gpt-4o-mini",
                     "temperature": 0,
@@ -22,12 +22,12 @@ if __name__ == "__main__":
                 }
             }
         ],
-        "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}
+        "rate_limit": {"gpt-4-turbo": "30000 per 1 minute"}
     }
 
     # Set up agent (answer search and selecting tools):
     agent_settings = AgentSettings(
-        agent_llm="gpt-4o-mini",
+        agent_llm="gpt-4-turbo",
         agent_llm_config={
             "rate_limit": "30000 per 1 minute"
         },
@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     # Set up summary LLM config
     summary_config_dict = {
-        "rate_limit": {"gpt-4o-mini": "30000 per 1 minute"}
+        "rate_limit": {"gpt-4-turbo": "30000 per 1 minute"}
     }
 
     # Set up answer format
@@ -52,9 +52,9 @@ if __name__ == "__main__":
 
     # Set up the final settings object
     paperqa_settings = Settings(
-        llm="gpt-4o-mini",
+        llm="gpt-4-turbo",
         llm_config=llm_config_dict,
-        summary_llm="gpt-4o-mini",
+        summary_llm="gpt-4-turbo",
         summary_llm_config=summary_config_dict,
         agent=agent_settings,
         temperature=0,

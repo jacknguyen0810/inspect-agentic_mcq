@@ -3,8 +3,8 @@ import pandas as pd
 from paperqa import Settings
 from paperqa.settings import AgentSettings, AnswerSettings
 
-from paperqa2_analysis.evaluate import MultipleChoiceEval
-from paperqa2_analysis.agents.paperqa_agent import paperqa_agent
+from inspect_agentic_mcq.evaluate import MultipleChoiceEval
+from inspect_agentic_mcq.agents.paperqa_agent import paperqa_agent
 
 if __name__ == "__main__":
     # Get the dataset

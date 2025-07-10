@@ -1,6 +1,6 @@
 \documentclass[12pt,a4paper]{article}
 
-% Essential packages
+% --- PACKAGES ---
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
@@ -12,31 +12,37 @@
 \usepackage{float}
 \usepackage{siunitx}
 \usepackage{cleveref}
+\usepackage{times} 
+\usepackage{authblk}
+\usepackage{flushend} 
+\usepackage{parskip} 
 
-% Page layout
-\usepackage[margin=2.5cm]{geometry}
-\usepackage{setspace}
-\onehalfspacing
+% --- LAYOUT ---
+\usepackage[margin=2cm, columnsep=0.8cm]{geometry}
+\setlength{\columnsep}{0.8cm}
 
-% Title information
-\title{Scientific Report Title}
-\author{Author Name}
+% --- DOCUMENT METADATA ---
+\title{\textbf{On the Reproducibility of Superhuman Performance in Agentic RAG Systems for Scientific Question Answering}}
+\author[1]{Phong-Anh Nguyen Trinh}
+\affil[1]{Department of Physics, University of Cambridge}
 \date{\today}
+
 
 \begin{document}
 
 \maketitle
 
-\input{sections/abstract}
-\input{sections/introduction}
-\input{sections/methods}
-\input{sections/results}
-\input{sections/discussion}
-\input{sections/conclusion}
+\centering{
+    Word count: 6,442
+}
 
-\section*{Acknowledgments}
-Acknowledge any funding, technical support, or other contributions.
+\input{introduction}
+\input{methods}
+\input{results}
+\input{discussion}
+\input{conclusion}
 
+% --- BIBLIOGRAPHY ---
 \bibliographystyle{plain}
 \bibliography{references}
 

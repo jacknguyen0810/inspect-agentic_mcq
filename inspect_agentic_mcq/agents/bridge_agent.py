@@ -3,7 +3,7 @@ import json
 
 from inspect_ai.agent import agent
 
-from paperqa2_analysis.agents.structured_agent import (
+from inspect_agentic_mcq.agents.structured_agent import (
     structured_agent,
     StructuredInput,
     StructuredOutput,
@@ -84,7 +84,7 @@ Think step by step.
 
 if __name__ == "__main__":
     import asyncio
-    from paperqa2_analysis.agents.paperqa_agent import paperqa_agent, paperqa_settings
+    from inspect_agentic_mcq.agents.paperqa_agent import paperqa_agent, paperqa_settings
 
     async def test_bridge_agent():
         # Create test input
